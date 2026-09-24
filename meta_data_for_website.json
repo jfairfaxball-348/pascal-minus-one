@@ -26,5 +26,6 @@
   "attribution": "John Fairfax-Ball maintains the repository and its Lean formalisation/computational scaffold. The repository does not claim novelty; Mathlib supplies Kummer's theorem (`padicValNat_choose`) used in the formalisation.",
   "original_source": null,
   "featured": true,
-  "additional_links": []
+  "additional_links": [],
+  "date": "2026-09-24"
 }

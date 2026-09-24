@@ -78,16 +78,20 @@ private theorem exists_unscaled_of_admissible_scaled
 private theorem admissibleIndices_zero (N : ℕ) :
     admissibleIndices N 0 = ∅ := by
   ext k
-  simp [admissibleIndices]
+  simp only [mem_admissibleIndices_iff, Finset.notMem_empty, iff_false]
+  rintro ⟨hkpos, _, hkdiv⟩
+  have hk0 : k = 0 := by
+    simpa using hkdiv
+  exact (Nat.ne_of_gt hkpos) hk0
 
 private theorem admissibleIndices_eq_empty_of_le
     {N m : ℕ} (hm : 0 < m) (hNm : N ≤ m) :
     admissibleIndices N m = ∅ := by
-  apply (Finset.eq_empty_iff_forall_not_mem).mpr
-  intro k hk
-  have hkadm : Admissible N m k := mem_admissibleIndices_iff.mp hk
-  have hmk : m ≤ k := Nat.le_of_dvd hkadm.1 hkadm.2.2
-  exact (Nat.not_lt_of_ge (hNm.trans hmk)) hkadm.2.1
+  ext k
+  simp only [mem_admissibleIndices_iff, Finset.notMem_empty, iff_false]
+  rintro ⟨hkpos, hklt, hdiv⟩
+  have hmk : m ≤ k := Nat.le_of_dvd hkpos hdiv
+  exact (Nat.not_lt_of_ge (hNm.trans hmk)) hklt
 
 private theorem le_padicVal_G_iff
     {N m p r : ℕ} (hp : p.Prime) (hG : G N m ≠ 0) :

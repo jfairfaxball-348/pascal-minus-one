@@ -208,6 +208,90 @@ lemma digitAt_ofDigits_eq_getD {p i : ℕ} (hp : 2 ≤ p) (L : List ℕ)
     · exact hL _ (List.mem_of_mem_drop (List.head!_mem_self hnil))
   rw [Nat.mod_eq_of_lt hhead, head_drop_eq_getD]
 
+/-- A componentwise subdigit list inherits the base bound from the ambient digit list. -/
+lemma all_lt_of_forall₂_le {S D : List ℕ} {p : ℕ}
+    (h : List.Forall₂ (· ≤ ·) S D)
+    (hD : ∀ d ∈ D, d < p) :
+    ∀ s ∈ S, s < p := by
+  revert hD
+  induction h with
+  | nil => simp
+  | @cons s d S D hsd htail ih =>
+      intro hD x hx
+      rcases List.mem_cons.mp hx with rfl | hx
+      · exact lt_of_le_of_lt hsd (hD d List.mem_cons_self)
+      · exact ih (fun y hy => hD y (List.mem_cons_of_mem d hy)) x hx
+
+/-- Componentwise list comparison can be read through `getD`, including past the end. -/
+lemma getD_le_of_forall₂ {S D : List ℕ}
+    (h : List.Forall₂ (· ≤ ·) S D) (i : ℕ) :
+    S.getD i 0 ≤ D.getD i 0 := by
+  induction h generalizing i with
+  | nil => simp
+  | @cons s d S D hsd htail ih =>
+      cases i with
+      | zero => simpa using hsd
+      | succ i => simpa using ih i
+
+/-- A componentwise comparison of valid base-`p` digit lists gives `DigitwiseLE`
+for the represented natural numbers. -/
+lemma digitwiseLE_of_forall₂_ofDigits {p : ℕ} (hp : 2 ≤ p) {S D : List ℕ}
+    (hSD : List.Forall₂ (· ≤ ·) S D)
+    (hS : ∀ s ∈ S, s < p)
+    (hD : ∀ d ∈ D, d < p) :
+    DigitwiseLE p (Nat.ofDigits p S) (Nat.ofDigits p D) := by
+  intro i
+  rw [digitAt_ofDigits_eq_getD hp S hS, digitAt_ofDigits_eq_getD hp D hD]
+  exact getD_le_of_forall₂ hSD i
+
+/-- Digitwise containment is equivalent to componentwise containment after padding the smaller
+digit list to the length of the ambient number. -/
+lemma digitsAppend_forall₂_of_digitwiseLE {p k N : ℕ}
+    (hp : 2 ≤ p) (hkn : k ≤ N) (hdigit : DigitwiseLE p k N) :
+    List.Forall₂ (· ≤ ·)
+      (Nat.digitsAppend p (Nat.digits p N).length k)
+      (Nat.digits p N) := by
+  have hkpow : k < p ^ (Nat.digits p N).length :=
+    lt_of_le_of_lt hkn (Nat.lt_base_pow_length_digits p N hp.one_lt)
+  have hlen :
+      (Nat.digitsAppend p (Nat.digits p N).length k).length =
+        (Nat.digits p N).length :=
+    Nat.length_digitsAppend hp.one_lt _ hkpow
+  have hS :
+      ∀ s ∈ Nat.digitsAppend p (Nat.digits p N).length k, s < p :=
+    fun s hs => Nat.lt_of_mem_digitsAppend hp.one_lt _ s hs
+  have hD : ∀ d ∈ Nat.digits p N, d < p :=
+    fun d hd => Nat.digits_lt_base hp.one_lt hd
+  have hSval :
+      Nat.ofDigits p (Nat.digitsAppend p (Nat.digits p N).length k) = k := by
+    simp [Nat.digitsAppend]
+  have hDval : Nat.ofDigits p (Nat.digits p N) = N :=
+    Nat.ofDigits_digits p N
+  refine List.forall₂_of_length_eq_of_get hlen ?_
+  intro i hiS hiD
+  have hgetD :
+      (Nat.digitsAppend p (Nat.digits p N).length k).getD i 0 ≤
+        (Nat.digits p N).getD i 0 := by
+    rw [← digitAt_ofDigits_eq_getD hp _ hS, hSval,
+      ← digitAt_ofDigits_eq_getD hp _ hD, hDval]
+    exact hdigit i
+  rw [List.getD_eq_get _ _ ⟨i, hiS⟩, List.getD_eq_get _ _ ⟨i, hiD⟩] at hgetD
+  exact hgetD
+
+/-- Removing any high zero digits from a valid base-`p` representation does not change its
+parity digit totals. -/
+lemma parityDigitSums_digits_ofDigits {p : ℕ} (hp : 2 ≤ p) {L : List ℕ}
+    (hL : ∀ d ∈ L, d < p) :
+    parityDigitSums (Nat.digits p (Nat.ofDigits p L)) = parityDigitSums L := by
+  have hinv :
+      Nat.digitsAppend p L.length (Nat.ofDigits p L) = L :=
+    (Nat.setInvOn_digitsAppend_ofDigits hp.one_lt L.length).1 ⟨rfl, hL⟩
+  calc
+    parityDigitSums (Nat.digits p (Nat.ofDigits p L)) =
+        parityDigitSums (Nat.digitsAppend p L.length (Nat.ofDigits p L)) :=
+      (parityDigitSums_digitsAppend p L.length (Nat.ofDigits p L)).symm
+    _ = parityDigitSums L := congrArg parityDigitSums hinv
+
 /-- TODO(MinusOne-2): no-borrow admissible indices are proper zero-sum signed submultisets. -/
 theorem noBorrow_iff_proper_signed_zero_sum
     {m p N : ℕ} (hm : 3 ≤ m) (hp : p.Prime) (hpm : p % m = m - 1) (hmN : m ∣ N) :

@@ -1096,6 +1096,186 @@ theorem mixed_case_one_borrow_of_gt
     rw [padicVal_choose_eq_carryCount hkn (Nat.lt_succ_self t), hcount]
   exact ⟨k, ⟨hkpos, hkN, hmk⟩, hval⟩
 
+/-- A natural digit list of total mass one represents a single power of the base. -/
+lemma exists_ofDigits_eq_pow_of_sum_eq_one (p : ℕ) :
+    ∀ L : List ℕ, L.sum = 1 →
+      ∃ i, i < L.length ∧ Nat.ofDigits p L = p ^ i := by
+  intro L
+  induction L with
+  | nil =>
+      intro hsum
+      simp at hsum
+  | cons d ds ih =>
+      intro hsum
+      simp only [List.sum_cons] at hsum
+      by_cases hd : d = 0
+      · subst d
+        have htail : ds.sum = 1 := by omega
+        obtain ⟨i, hi, hpow⟩ := ih htail
+        refine ⟨i + 1, by simp; omega, ?_⟩
+        simp only [Nat.ofDigits_cons, zero_add, hpow]
+        rw [Nat.mul_comm]
+        exact (pow_succ p i).symm
+      · have hd1 : d = 1 := by
+          have hdpos : 0 < d := Nat.pos_of_ne_zero hd
+          omega
+        have htail : ds.sum = 0 := by omega
+        have hzero : Nat.ofDigits p ds = 0 :=
+          ofDigits_eq_zero_of_sum_eq_zero p ds htail
+        subst d
+        refine ⟨0, by simp, ?_⟩
+        simp [Nat.ofDigits_cons, hzero]
+
+/-- Two nonzero coefficient blocks on same-parity powers cannot form a multiple of `m`
+when their coefficient sum is strictly below `m` and `p ≡ -1 (mod m)`. -/
+lemma not_dvd_add_same_parity_powers
+    {m p a b u v : ℕ} (hm : 3 ≤ m) (hpm : p % m = m - 1)
+    (hpos : 0 < a + b) (hlt : a + b < m)
+    (hpar : Even u ↔ Even v) :
+    ¬ m ∣ a * p ^ u + b * p ^ v := by
+  intro hdvd
+  have hpu := pow_mod_eq_parity_sign (m := m) (p := p) (i := u) (by omega) hpm
+  have hpv := pow_mod_eq_parity_sign (m := m) (p := p) (i := v) (by omega) hpm
+  have hpuMod :
+      p ^ u ≡ (if Even u then 1 else m - 1) [MOD m] := by
+    rw [Nat.ModEq, hpu]
+    by_cases hu : Even u
+    · simp [hu, Nat.mod_eq_of_lt (by omega : 1 < m)]
+    · simp [hu, Nat.mod_eq_of_lt (by omega : m - 1 < m)]
+  have hpvMod :
+      p ^ v ≡ (if Even v then 1 else m - 1) [MOD m] := by
+    rw [Nat.ModEq, hpv]
+    by_cases hv : Even v
+    · simp [hv, Nat.mod_eq_of_lt (by omega : 1 < m)]
+    · simp [hv, Nat.mod_eq_of_lt (by omega : m - 1 < m)]
+  have hcomb :=
+    (hpuMod.mul_left a).add (hpvMod.mul_left b)
+  have hzero :
+      a * p ^ u + b * p ^ v ≡ 0 [MOD m] :=
+    hdvd.modEq_zero_nat
+  have hrhs :=
+    hcomb.symm.trans hzero
+  have habdvd : m ∣ a + b := by
+    by_cases hu : Even u
+    · have hv : Even v := hpar.mp hu
+      have hz : a + b ≡ 0 [MOD m] := by
+        simpa [hu, hv] using hrhs
+      exact Nat.modEq_zero_iff_dvd.mp hz
+    · have hv : ¬ Even v := by
+        intro hv
+        exact hu (hpar.mpr hv)
+      have hz :
+          a * (m - 1) + b * (m - 1) ≡ 0 [MOD m] := by
+        simpa [hu, hv] using hrhs
+      have hprod : m ∣ (a + b) * (m - 1) := by
+        rw [Nat.add_mul]
+        exact Nat.modEq_zero_iff_dvd.mp hz
+      have hcop : Nat.Coprime m (m - 1) := by
+        rw [← Nat.coprime_sub_self_left (m := m - 1) (n := m) (by omega)]
+        have hdiff : m - (m - 1) = 1 := by omega
+        rw [hdiff]
+        simp
+      exact hcop.dvd_of_dvd_mul_right hprod
+  have hmle : m ≤ a + b := Nat.le_of_dvd hpos habdvd
+  omega
+
+/-- In the mixed case the base-`p` expansion is exactly two unit powers, and
+their exponents have opposite parity. -/
+lemma mixed_eq_sum_two_powers
+    {m p N : ℕ} (hm : 3 ≤ m) (hp : p.Prime) (hpm : p % m = m - 1)
+    (hmN : m ∣ N)
+    (hmixed : evenDigitSum p N = 1 ∧ oddDigitSum p N = 1) :
+    ∃ s t, s < t ∧ N = p ^ s + p ^ t ∧ ¬ (Even s ↔ Even t) := by
+  have hp0 : 0 < p := hp.pos
+  have hp1 : 1 < p := hp.one_lt
+  have hp2 : 2 ≤ p := hp.two_le
+  have hNne : N ≠ 0 := by
+    intro hN
+    subst N
+    simp at hmixed
+  let t := Nat.log p N
+  let L := Nat.digits p N
+  have hpowle : p ^ t ≤ N := by
+    dsimp [t]
+    exact Nat.pow_log_le_self p hNne
+  have hNlt : N < p ^ (t + 1) := by
+    dsimp [t]
+    simpa [Nat.succ_eq_add_one] using Nat.lt_pow_succ_log_self hp1 N
+  have hqpos : 0 < N / p ^ t := by
+    rw [Nat.div_pos_iff_lt_mul]
+    exact ⟨pow_pos hp0 t, by simpa using hpowle⟩
+  have hqlt : N / p ^ t < p := by
+    rw [Nat.div_lt_iff_lt_mul (pow_pos hp0 t)]
+    simpa [pow_succ, Nat.mul_comm] using hNlt
+  have htocc : Occupied p N t := by
+    dsimp [Occupied, digitAt]
+    rw [Nat.mod_eq_of_lt hqlt]
+    exact hqpos
+  have htdigit : digitAt p N t = 1 := by
+    have hbound :=
+      digitAt_le_parityDigitSum (p := p) (N := N) (i := t) hp2
+    by_cases htEven : Even t
+    · rw [if_pos htEven, hmixed.1] at hbound
+      have htpos : 0 < digitAt p N t := htocc
+      omega
+    · rw [if_neg htEven, hmixed.2] at hbound
+      have htpos : 0 < digitAt p N t := htocc
+      omega
+  have hqeq : N / p ^ t = 1 := by
+    have h := htdigit
+    dsimp [digitAt] at h
+    rw [Nat.mod_eq_of_lt hqlt] at h
+    exact h
+  have hLlen : L.length = t + 1 := by
+    dsimp [L, t]
+    exact Nat.length_digits p N hp1 hNne
+  have htlen : t < L.length := by omega
+  have hLsum : L.sum = 2 := by
+    have hsum :
+        evenDigitSum p N + oddDigitSum p N = L.sum := by
+      simpa [L, evenDigitSum, oddDigitSum] using
+        parityDigitSums_add_eq_sum L
+    omega
+  have hgettop : L.getD t 0 = digitAt p N t := by
+    dsimp [L]
+    rw [Nat.getD_digits N t hp2]
+    rfl
+  have hdrop : L.drop t = [L.getD t 0] := by
+    rw [List.drop_eq_getElem_cons htlen,
+      ← List.getD_eq_getElem L 0 htlen,
+      ← hLlen, List.drop_length]
+  have hdecomp : (L.take t).sum + digitAt p N t = 2 := by
+    have h := List.sum_take_add_sum_drop L t
+    rw [hdrop, List.sum_singleton, hgettop, hLsum] at h
+    exact h
+  have hprefsum : (L.take t).sum = 1 := by
+    omega
+  have htakeLen : (L.take t).length = t := by
+    exact List.length_take_of_le htlen.le
+  obtain ⟨s, hslen, hprefixpow⟩ :=
+    exists_ofDigits_eq_pow_of_sum_eq_one p (L.take t) hprefsum
+  have hst : s < t := by
+    rw [htakeLen] at hslen
+    exact hslen
+  have hmod : N % p ^ t = p ^ s := by
+    rw [Nat.self_mod_pow_eq_ofDigits_take t N hp2]
+    simpa [L] using hprefixpow
+  have hNpow : N = p ^ s + p ^ t := by
+    calc
+      N = N % p ^ t + p ^ t * (N / p ^ t) :=
+        (Nat.mod_add_div N (p ^ t)).symm
+      _ = p ^ s + p ^ t := by rw [hmod, hqeq]; simp
+  have hopposite : ¬ (Even s ↔ Even t) := by
+    intro hsame
+    have hbad :=
+      not_dvd_add_same_parity_powers
+        (m := m) (p := p) (a := 1) (b := 1) (u := s) (v := t)
+        hm hpm (by omega) (by omega) hsame
+    apply hbad
+    rw [one_mul, one_mul, ← hNpow]
+    exact hmN
+  exact ⟨s, t, hst, hNpow, hopposite⟩
+
 /-- TODO(MinusOne-6): in the exceptional mixed case, no admissible index has exactly one borrow. -/
 theorem exceptional_mixed_no_one_borrow
     {m p N : ℕ} (hm : 3 ≤ m) (hp : p.Prime) (hpm : p = m - 1)

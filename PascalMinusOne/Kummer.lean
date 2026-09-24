@@ -38,7 +38,8 @@ lemma digitwiseLE_iff_mod_pow_le {p k n : ℕ} (hp : 0 < p) :
   constructor
   · intro hdigit i
     induction i with
-    | zero => simp only [pow_zero, Nat.mod_one]
+    | zero =>
+        simpa only [pow_zero, Nat.mod_one] using (Nat.le_refl 0)
     | succ i ih =>
         rw [mod_pow_succ_eq_mod_add_digitAt, mod_pow_succ_eq_mod_add_digitAt]
         exact Nat.add_le_add ih (Nat.mul_le_mul_left _ (hdigit i))
@@ -129,7 +130,8 @@ theorem padicVal_choose_eq_zero_iff_digitwiseLE {p n k : ℕ} [Fact p.Prime]
     rw [digitwiseLE_iff_mod_pow_le hp]
     intro i
     cases i with
-    | zero => simp only [pow_zero, Nat.mod_one]
+    | zero =>
+        simpa only [pow_zero, Nat.mod_one] using (Nat.le_refl 0)
     | succ i =>
         let b := max (Nat.log p n + 1) (i + 2)
         have hnb : Nat.log p n < b := by

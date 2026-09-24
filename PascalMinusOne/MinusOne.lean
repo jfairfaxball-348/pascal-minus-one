@@ -58,7 +58,7 @@ lemma ofDigits_neg_one_eq_parityDigitSums (L : List ℕ) :
   induction L with
   | nil => simp [Nat.ofDigits, parityDigitSums]
   | cons d ds ih =>
-      simp [Nat.ofDigits, parityDigitSums, ih]
+      rw [Nat.mod_one, Nat.mod_one] [Nat.ofDigits, parityDigitSums, ih]
       ring
 
 /-- Divisibility by `m` is the signed zero-sum condition on the even/odd base-`p`
@@ -1485,7 +1485,8 @@ theorem exceptional_mixed_no_one_borrow
         exact ⟨fun _ ↦ htE, fun _ ↦ hsE⟩
     have hpar : Even (s - 1) ↔ Even t :=
       hsflip.trans hop
-    have habpos : 0 < a + b := by omega
+    have habpos : 0 < a + b :=
+      Nat.add_pos_left ha0 b
     have hablt : a + b < m := by
       rw [← hpSucc]
       omega
@@ -1592,7 +1593,8 @@ theorem exceptional_mixed_no_one_borrow
             fun htE ↦ (htnot htE).elim⟩
     have hpar : Even s ↔ Even (t - 1) :=
       hop.trans htflip.symm
-    have hbapos : 0 < b + a := by omega
+    have hbapos : 0 < b + a :=
+      Nat.add_pos_right b ha0
     have hbalt : b + a < m := by
       rw [← hpSucc]
       omega

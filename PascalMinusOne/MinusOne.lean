@@ -1337,6 +1337,7 @@ theorem exceptional_mixed_no_one_borrow
       apply
         (not_carryAt_iff_mod_pow_le
           (p := p) (n := N) (k := k) (i := 0) hp0 hkn).2
+      change k % 1 ≤ N % 1
       rw [Nat.mod_one, Nat.mod_one]
     · intro hjcarry
       have hjmem :

@@ -59,7 +59,6 @@ private lemma ofDigits_pos_of_sum_pos
       · exact Nat.add_pos_left hd _
       · have hd0 : d = 0 := Nat.eq_zero_of_not_pos hd
         subst d
-        simp only [zero_add]
         exact Nat.mul_pos hp (ih hL)
 
 /-- A positive natural has positive base-`p` digit sum. -/
@@ -163,8 +162,7 @@ private theorem plus_one_one_witness
   letI : Fact p.Prime := ⟨hp⟩
   have hmp : m < p := by
     by_cases hm1 : m = 1
-    · subst m
-      exact hp.one_lt
+    · omega
     · have hmgt1 : 1 < m := by omega
       by_contra hnot
       have hple : p ≤ m := Nat.le_of_not_gt hnot
@@ -195,7 +193,8 @@ private theorem plus_one_one_witness
             have hsum' := hsum
             rw [hD, hT] at hsum'
             simp only [List.sum_cons, List.sum_nil, add_zero] at hsum'
-            omega
+            have hEq : N = m := hNval.symm.trans hsum'
+            exact (Nat.ne_of_gt hNm) hEq
         | cons a P =>
             simp [hD, hT] at hle
   obtain ⟨P, a, d, hDdecomp⟩ :=
@@ -206,9 +205,7 @@ private theorem plus_one_one_witness
     have hlast := Nat.getLast_digit_ne_zero p hNne
     have hlastEq :
         (Nat.digits p N).getLast hDne = d := by
-      rw [hDdecomp]
-      simpa [List.append_assoc] using
-        (List.getLast_append_singleton (P ++ [a]))
+      simp [hDdecomp, List.append_assoc]
     rw [hlastEq] at hlast
     exact hlast
   have hdpos : 0 < d := Nat.pos_of_ne_zero hdne
@@ -241,7 +238,7 @@ private theorem plus_one_one_witness
     dsimp [K] at hx
     rcases List.mem_append.mp hx with hxP | hxTail
     · exact hPbound x hxP
-    · simp only [List.mem_cons, List.mem_singleton] at hxTail
+    · simp only [List.mem_cons, List.not_mem_nil, or_false] at hxTail
       rcases hxTail with rfl | rfl
       · exact ha1_lt
       · omega
@@ -265,15 +262,11 @@ private theorem plus_one_one_witness
     dsimp [R]
     simp
   have hlocal :
-      Nat.ofDigits p [a + 1, d - 1] + Nat.ofDigits p [p - 1] =
-        Nat.ofDigits p [a, d] := by
-    simp only [Nat.ofDigits, mul_zero, add_zero]
-    have hstep :
-        (a + 1 + p * (d - 1)) + (p - 1) =
-          a + p * (d - 1) + p := by
-      omega
-    rw [hstep]
-    rw [← Nat.mul_add, Nat.sub_add_cancel hdpos]
+      (Nat.ofDigits (p : ℕ) [a + 1, d - 1] : ℕ) +
+          Nat.ofDigits (p : ℕ) [p - 1] =
+        Nat.ofDigits (p : ℕ) [a, d] := by
+    simp only [Nat.ofDigits, Nat.cast_id, mul_zero, add_zero]
+    omega
   have hKR :
       Nat.ofDigits p K + Nat.ofDigits p R = N := by
     calc
@@ -381,8 +374,10 @@ theorem plus_one_valuation
         dsimp [S]
         simp [Nat.digitsAppend]
       have hksumlt : (Nat.digits p k).sum < m := by
-        rw [← hSsum, hminimal]
-        exact hsumlt
+        calc
+          (Nat.digits p k).sum = S.sum := hSsum.symm
+          _ < (Nat.digits p N).sum := hsumlt
+          _ = m := hminimal
       have hksumpos : 0 < (Nat.digits p k).sum :=
         digitSum_pos_of_pos hkpos
       have hksumdiv : m ∣ (Nat.digits p k).sum :=

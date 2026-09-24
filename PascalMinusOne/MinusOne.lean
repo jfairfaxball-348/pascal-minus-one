@@ -251,20 +251,22 @@ lemma digitsAppend_forall₂_of_digitwiseLE {p k N : ℕ}
     List.Forall₂ (· ≤ ·)
       (Nat.digitsAppend p (Nat.digits p N).length k)
       (Nat.digits p N) := by
+  have hp1 : 1 < p := by omega
   have hkpow : k < p ^ (Nat.digits p N).length :=
-    lt_of_le_of_lt hkn (Nat.lt_base_pow_length_digits p N hp.one_lt)
+    lt_of_le_of_lt hkn
+      (Nat.lt_base_pow_length_digits (b := p) (m := N) hp1)
   have hlen :
       (Nat.digitsAppend p (Nat.digits p N).length k).length =
         (Nat.digits p N).length :=
-    Nat.length_digitsAppend hp.one_lt _ hkpow
+    Nat.length_digitsAppend hp1 _ hkpow
   have hS :
       ∀ s ∈ Nat.digitsAppend p (Nat.digits p N).length k, s < p :=
-    fun s hs => Nat.lt_of_mem_digitsAppend hp.one_lt _ s hs
+    fun s hs => Nat.lt_of_mem_digitsAppend hp1 _ s hs
   have hD : ∀ d ∈ Nat.digits p N, d < p :=
-    fun d hd => Nat.digits_lt_base hp.one_lt hd
+    fun d hd => Nat.digits_lt_base hp1 hd
   have hSval :
       Nat.ofDigits p (Nat.digitsAppend p (Nat.digits p N).length k) = k := by
-    simp [Nat.digitsAppend]
+    rw [Nat.digitsAppend, Nat.ofDigits_append_replicate_zero, Nat.ofDigits_digits]
   have hDval : Nat.ofDigits p (Nat.digits p N) = N :=
     Nat.ofDigits_digits p N
   refine List.forall₂_of_length_eq_of_get hlen ?_
@@ -275,7 +277,7 @@ lemma digitsAppend_forall₂_of_digitwiseLE {p k N : ℕ}
     rw [← digitAt_ofDigits_eq_getD hp _ hS, hSval,
       ← digitAt_ofDigits_eq_getD hp _ hD, hDval]
     exact hdigit i
-  rw [List.getD_eq_get _ _ ⟨i, hiS⟩, List.getD_eq_get _ _ ⟨i, hiD⟩] at hgetD
+  rw [List.getD_eq_getElem _ _ hiS, List.getD_eq_getElem _ _ hiD] at hgetD
   exact hgetD
 
 /-- Removing any high zero digits from a valid base-`p` representation does not change its
@@ -285,7 +287,7 @@ lemma parityDigitSums_digits_ofDigits {p : ℕ} (hp : 2 ≤ p) {L : List ℕ}
     parityDigitSums (Nat.digits p (Nat.ofDigits p L)) = parityDigitSums L := by
   have hinv :
       Nat.digitsAppend p L.length (Nat.ofDigits p L) = L :=
-    (Nat.setInvOn_digitsAppend_ofDigits hp.one_lt L.length).1 ⟨rfl, hL⟩
+    (Nat.setInvOn_digitsAppend_ofDigits (by omega : 1 < p) L.length).1 ⟨rfl, hL⟩
   calc
     parityDigitSums (Nat.digits p (Nat.ofDigits p L)) =
         parityDigitSums (Nat.digitsAppend p L.length (Nat.ofDigits p L)) :=
@@ -355,7 +357,7 @@ theorem noBorrow_iff_proper_signed_zero_sum
     obtain ⟨S, hSD, hpar⟩ :=
       exists_subdigits_with_parityDigitSums (Nat.digits p N) haD hbD
     have hD : ∀ d ∈ Nat.digits p N, d < p :=
-      fun d hd => Nat.digits_lt_base hp.one_lt hd
+      fun d hd => Nat.digits_lt_base hp1 hd
     have hS : ∀ s ∈ S, s < p :=
       all_lt_of_forall₂_le hSD hD
     let k := Nat.ofDigits p S

@@ -9,12 +9,22 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: leanprover/lean-action@v1
+      - name: Install Lean
+        uses: leanprover/lean-action@v1
         with:
-          build: true
+          auto-config: false
+      - name: Resolve dependencies
+        run: lake update
+      - name: Fetch Mathlib cache
+        run: lake exe cache get
+      - name: Build Lean project
+        run: lake build
       - name: Python regression tests
         run: python3 -m unittest discover -s tests -v
+      - name: Run reference sweep
+        run: python3 scripts/reference_check.py
       - name: Report explicit sorry count
         run: |
           count=$(grep -R --fixed-string -h 'sorry' PascalMinusOne/*.lean | wc -l)
           echo "Explicit sorry count: $count"
+          test "$count" -eq 11

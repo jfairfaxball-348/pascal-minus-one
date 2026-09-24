@@ -8,6 +8,10 @@ namespace PascalMinusOne
 def CarryAt (p n k i : ℕ) : Prop :=
   p ^ i ≤ k % p ^ i + (n - k) % p ^ i
 
+instance carryAtDecidable (p n k i : ℕ) : Decidable (CarryAt p n k i) := by
+  unfold CarryAt
+  infer_instance
+
 /-- Number of carries below a supplied bound. -/
 def carryCount (p n k b : ℕ) : ℕ :=
   ((Finset.Ico 1 b).filter fun i ↦ CarryAt p n k i).card

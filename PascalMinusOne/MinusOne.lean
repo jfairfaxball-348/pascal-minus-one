@@ -1893,7 +1893,10 @@ theorem minus_one_valuation
         have hG2 : padicValNat p (G N m) = 2 :=
           padicVal_G_eq_of_lower_bound_of_witness
             hm0 hNm hp hlower2 hwit2
-        simpa [minusOneExpectedValuation, heven, hodd, hedge] using hG2
+        have hexpected :
+            minusOneExpectedValuation m p (evenDigitSum p N) (oddDigitSum p N) = 2 := by
+          rw [minusOneExpectedValuation, if_pos ⟨heven, hodd, hedge⟩]
+        exact hG2.trans hexpected.symm
       · have hwit1 :
             ∃ k, Admissible N m k ∧ padicValNat p (N.choose k) = 1 :=
           mixed_case_one_borrow_of_gt hm hp hpm hgt hmixed'

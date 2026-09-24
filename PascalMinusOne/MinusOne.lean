@@ -1643,8 +1643,10 @@ theorem exceptional_mixed_two_borrow_witness
         intro hsEq
         apply hopposite
         have htEq : t = s + 2 := by omega
-        rw [htEq]
-        simp [Nat.even_add']
+        rw [htEq, Nat.even_add']
+        have hnotOddTwo : ¬ Odd (2 : ℕ) := by
+          norm_num [Odd]
+        simp [hnotOddTwo, Nat.not_odd_iff_even]
       omega
   have hpowst : p ^ s < p ^ t :=
     Nat.pow_lt_pow_right hp1 hst

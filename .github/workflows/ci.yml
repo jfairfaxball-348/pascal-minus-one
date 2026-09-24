@@ -1,0 +1,20 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: leanprover/lean-action@v1
+        with:
+          build: true
+      - name: Python regression tests
+        run: python3 -m unittest discover -s tests -v
+      - name: Report explicit sorry count
+        run: |
+          count=$(grep -R --fixed-string -h 'sorry' PascalMinusOne/*.lean | wc -l)
+          echo "Explicit sorry count: $count"

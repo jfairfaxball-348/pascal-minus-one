@@ -75,10 +75,15 @@ private theorem exists_unscaled_of_admissible_scaled
     rfl
   exact ⟨k, ⟨hkpos, hklt, hqk⟩, hKform⟩
 
+private theorem admissibleIndices_zero (N : ℕ) :
+    admissibleIndices N 0 = ∅ := by
+  ext k
+  simp [admissibleIndices]
+
 private theorem admissibleIndices_eq_empty_of_le
     {N m : ℕ} (hm : 0 < m) (hNm : N ≤ m) :
     admissibleIndices N m = ∅ := by
-  apply Finset.eq_empty_iff_forall_not_mem.mpr
+  apply (Finset.eq_empty_iff_forall_not_mem).mpr
   intro k hk
   have hkadm : Admissible N m k := mem_admissibleIndices_iff.mp hk
   have hmk : m ≤ k := Nat.le_of_dvd hkadm.1 hkadm.2.2
@@ -117,7 +122,7 @@ theorem scaling_valuation
       padicValNat p (G N' q) := by
   by_cases hq0 : q = 0
   · subst q
-    simp [G, admissibleIndices]
+    simp [G, admissibleIndices_zero]
   by_cases hqN : q < N'
   · have hqpos : 0 < q := Nat.pos_of_ne_zero hq0
     have hpow : 0 < p ^ c := pow_pos hp.pos c

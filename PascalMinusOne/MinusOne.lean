@@ -1293,6 +1293,7 @@ theorem exceptional_mixed_no_one_borrow
   have hpmMod : p % m = m - 1 := by
     rw [hpm]
     exact Nat.mod_eq_of_lt (by omega)
+  have hpSucc : p + 1 = m := by omega
   obtain ⟨s, t, hst, hNpow, hopposite⟩ :=
     mixed_eq_sum_two_powers hm hp hpmMod hmN hmixed
   have hpowst : p ^ s < p ^ t :=
@@ -1333,7 +1334,10 @@ theorem exceptional_mixed_no_one_borrow
       ¬ CarryAt p N k j := by
     by_cases hj0 : j = 0
     · subst j
-      simp [CarryAt]
+      apply
+        (not_carryAt_iff_mod_pow_le
+          (p := p) (n := N) (k := k) (i := 0) hp0 hkn).2
+      simp
     · intro hjcarry
       have hjmem :
           j ∈ (Finset.Ico 1 (t + 1)).filter (fun r ↦ CarryAt p N k r) := by
@@ -1416,7 +1420,8 @@ theorem exceptional_mixed_no_one_borrow
     have hNprev : N % p ^ (s - 1) = 0 :=
       hNmod_low (by omega)
     rw [hNprev] at hprev
-    have hkmodprev_zero : k % p ^ (s - 1) = 0 := by omega
+    have hkmodprev_zero : k % p ^ (s - 1) = 0 :=
+      Nat.eq_zero_of_le_zero hprev
     let a := digitAt p k (s - 1)
     have hksform : k % p ^ s = p ^ (s - 1) * a := by
       have hrec := mod_pow_succ_eq_mod_add_digitAt p k (s - 1)
@@ -1480,11 +1485,15 @@ theorem exceptional_mixed_no_one_borrow
         exact ⟨fun _ ↦ htE, fun _ ↦ hsE⟩
     have hpar : Even (s - 1) ↔ Even t :=
       hsflip.trans hop
+    have habpos : 0 < a + b := by omega
+    have hablt : a + b < m := by
+      rw [← hpSucc]
+      omega
     have hbad :=
       not_dvd_add_same_parity_powers
         (m := m) (p := p) (a := a) (b := b)
         (u := s - 1) (v := t)
-        hm hpmMod (by omega) (by omega) hpar
+        hm hpmMod habpos hablt hpar
     apply hbad
     rw [← hkform]
     exact hmk
@@ -1495,7 +1504,8 @@ theorem exceptional_mixed_no_one_borrow
     have hsPrefix := hprefix_of_nocarry hsNc
     have hNs : N % p ^ s = 0 := hNmod_low le_rfl
     rw [hNs] at hsPrefix
-    have hkmods_zero : k % p ^ s = 0 := by omega
+    have hkmods_zero : k % p ^ s = 0 :=
+      Nat.eq_zero_of_le_zero hsPrefix
     have hprevNc : ¬ CarryAt p N k (t - 1) :=
       hnocarry (by omega) (by omega)
     have hprevPrefix := hprefix_of_nocarry hprevNc
@@ -1553,6 +1563,7 @@ theorem exceptional_mixed_no_one_borrow
       simpa [q] using (Nat.mod_add_div k (p ^ t)).symm
     have hq0 : q = 0 := by
       by_contra hqne
+      have hqpos : 0 < q := Nat.pos_of_ne_zero hqne
       have hqeq : q = 1 := by omega
       rw [hqeq, mul_one] at hkdecomp
       rw [hNpow] at hklt
@@ -1581,11 +1592,15 @@ theorem exceptional_mixed_no_one_borrow
             fun htE ↦ (htnot htE).elim⟩
     have hpar : Even s ↔ Even (t - 1) :=
       hop.trans htflip.symm
+    have hbapos : 0 < b + a := by omega
+    have hbalt : b + a < m := by
+      rw [← hpSucc]
+      omega
     have hbad :=
       not_dvd_add_same_parity_powers
         (m := m) (p := p) (a := b) (b := a)
         (u := s) (v := t - 1)
-        hm hpmMod (by omega) (by omega) hpar
+        hm hpmMod hbapos hbalt hpar
     apply hbad
     rw [← hkform]
     exact hmk

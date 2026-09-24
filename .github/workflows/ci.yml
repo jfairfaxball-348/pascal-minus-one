@@ -27,4 +27,4 @@ jobs:
         run: |
           count=$(grep -R --fixed-string -h 'sorry' PascalMinusOne/*.lean | wc -l)
           echo "Explicit sorry count: $count"
-          test "$count" -eq 5
+          test "$count" -eq 4

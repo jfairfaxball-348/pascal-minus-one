@@ -204,7 +204,7 @@ lemma digitAt_ofDigits_eq_getD {p i : ℕ} (hp : 2 ≤ p) (L : List ℕ)
     Nat.ofDigits_mod_eq_head!]
   have hhead : (L.drop i).head! < p := by
     by_cases hnil : L.drop i = []
-    · simp [hnil, hp]
+    · simpa [hnil] using (show 0 < p by omega)
     · exact hL _ (List.mem_of_mem_drop (List.head!_mem_self hnil))
   rw [Nat.mod_eq_of_lt hhead, head_drop_eq_getD]
 

@@ -1642,8 +1642,9 @@ theorem exceptional_mixed_two_borrow_witness
       have hsne : s ≠ t - 2 := by
         intro hsEq
         apply hopposite
-        rw [hsEq, Nat.even_sub' ht2]
-        simp
+        have htEq : t = s + 2 := by omega
+        rw [htEq]
+        exact (Nat.even_add_two).symm
       omega
   have hpowst : p ^ s < p ^ t :=
     Nat.pow_lt_pow_right hp1 hst
@@ -1683,11 +1684,11 @@ theorem exceptional_mixed_two_borrow_witness
   have hmk : m ∣ k := by
     refine ⟨p ^ (t - 2), ?_⟩
     dsimp [k]
+    have htSub : t - 2 + 1 = t - 1 := by omega
     calc
       p ^ (t - 1) + p ^ (t - 2) =
           p ^ (t - 2) * p + p ^ (t - 2) := by
-            rw [← pow_succ]
-            congr 1 <;> omega
+            rw [← pow_succ, htSub]
       _ = (p + 1) * p ^ (t - 2) := by ring
       _ = m * p ^ (t - 2) := by rw [hpSucc]
   have hnocarry_of_lt {j : ℕ} (hjt : j < t - 1) :
@@ -1738,6 +1739,7 @@ theorem exceptional_mixed_two_borrow_witness
     dsimp [k]
     by_cases hsPred : s = t - 1
     · rw [hsPred]
+      have hpowLowPos : 0 < p ^ (t - 2) := pow_pos hp0 _
       omega
     · have hsLow : s < t - 1 := by omega
       have hpowLow : p ^ s < p ^ (t - 1) :=
@@ -1774,8 +1776,11 @@ theorem exceptional_mixed_two_borrow_witness
     rw [carryCount, hfilter]
     have hne : t - 1 ≠ t := by omega
     simp [hne]
+  have hloglt : Nat.log p N < t + 1 := by
+    rw [hlog]
+    exact Nat.lt_succ_self t
   have hval : padicValNat p (N.choose k) = 2 := by
-    rw [padicVal_choose_eq_carryCount hkn (by rw [hlog]; omega), hcount]
+    rw [padicVal_choose_eq_carryCount hkn hloglt, hcount]
   exact ⟨k, ⟨hkpos, hkN, hmk⟩, hval⟩
 
 /-- Main target theorem for primes congruent to `-1` modulo `m`. -/

@@ -58,7 +58,7 @@ lemma ofDigits_neg_one_eq_parityDigitSums (L : List ℕ) :
   induction L with
   | nil => simp [Nat.ofDigits, parityDigitSums]
   | cons d ds ih =>
-      rw [Nat.mod_one, Nat.mod_one] [Nat.ofDigits, parityDigitSums, ih]
+      simp [Nat.ofDigits, parityDigitSums, ih]
       ring
 
 /-- Divisibility by `m` is the signed zero-sum condition on the even/odd base-`p`
@@ -1337,7 +1337,7 @@ theorem exceptional_mixed_no_one_borrow
       apply
         (not_carryAt_iff_mod_pow_le
           (p := p) (n := N) (k := k) (i := 0) hp0 hkn).2
-      simp
+      rw [Nat.mod_one, Nat.mod_one]
     · intro hjcarry
       have hjmem :
           j ∈ (Finset.Ico 1 (t + 1)).filter (fun r ↦ CarryAt p N k r) := by

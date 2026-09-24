@@ -950,7 +950,7 @@ lemma ofDigits_le_pow_length_pred_of_sum_eq_one {p : ℕ} (hp : 0 < p) :
           ofDigits_eq_zero_of_sum_eq_zero p ds htail
         subst d
         simp only [Nat.ofDigits_cons, hofd, mul_zero, add_zero, List.length_cons]
-        exact (pow_pos hp ds.length).one_le
+        exact pow_pos hp ds.length
 
 /-- In the mixed token case with `p > m`, the witness `m * p^(t-1)` creates
 exactly one carry at the leading boundary. -/

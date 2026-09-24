@@ -658,7 +658,7 @@ theorem uniform_case_one_borrow_edge
     rfl
   have hdrop : L.drop t = [L.getD t 0] := by
     rw [List.drop_eq_getElem_cons htlen,
-      ← List.getD_eq_getElem (d := 0) htlen,
+      ← List.getD_eq_getElem L 0 htlen,
       ← hLlen, List.drop_length]
   have hdecomp : (L.take t).sum + digitAt p N t = m := by
     have h := List.sum_take_add_sum_drop L t
@@ -680,7 +680,7 @@ theorem uniform_case_one_borrow_edge
   have hsposL : 0 < L[s] := by
     simpa only [List.getElem_take] using hsposTake
   have hsgetpos : 0 < L.getD s 0 := by
-    rw [List.getD_eq_getElem (d := 0) hslen]
+    rw [List.getD_eq_getElem L 0 hslen]
     exact hsposL
   have hsocc : Occupied p N s := by
     dsimp [Occupied]

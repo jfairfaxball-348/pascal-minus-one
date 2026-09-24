@@ -59,7 +59,8 @@ private lemma ofDigits_pos_of_sum_pos
       · exact Nat.add_pos_left hd _
       · have hd0 : d = 0 := Nat.eq_zero_of_not_pos hd
         subst d
-        exact Nat.mul_pos hp (ih hL)
+        have hL' : 0 < D.sum := by simpa using hL
+        exact Nat.mul_pos hp (ih hL')
 
 /-- A positive natural has positive base-`p` digit sum. -/
 private lemma digitSum_pos_of_pos
@@ -162,7 +163,8 @@ private theorem plus_one_one_witness
   letI : Fact p.Prime := ⟨hp⟩
   have hmp : m < p := by
     by_cases hm1 : m = 1
-    · omega
+    · rw [hm1]
+      exact hp.one_lt
     · have hmgt1 : 1 < m := by omega
       by_contra hnot
       have hple : p ≤ m := Nat.le_of_not_gt hnot
@@ -266,7 +268,15 @@ private theorem plus_one_one_witness
           Nat.ofDigits (p : ℕ) [p - 1] =
         Nat.ofDigits (p : ℕ) [a, d] := by
     simp only [Nat.ofDigits, Nat.cast_id, mul_zero, add_zero]
-    omega
+    have hpback : p - 1 + 1 = p := Nat.sub_add_cancel hp.one_le
+    calc
+      (a + 1 + p * (d - 1)) + (p - 1) =
+          a + p * (d - 1) + ((p - 1) + 1) := by
+            ac_rfl
+      _ = a + p * (d - 1) + p := by rw [hpback]
+      _ = a + p * ((d - 1) + 1) := by
+            simp [Nat.mul_add, Nat.add_assoc]
+      _ = a + p * d := by rw [Nat.sub_add_cancel hdpos]
   have hKR :
       Nat.ofDigits p K + Nat.ofDigits p R = N := by
     calc

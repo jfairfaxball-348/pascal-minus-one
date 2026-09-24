@@ -14,9 +14,9 @@ The target is `PascalMinusOne.minus_one_valuation` for `m ≥ 3`, `m ∣ N`, `m 
 
 ## Scaffold proof gaps
 
-The initial scaffold contained **11 explicit `sorry` occurrences**. On the current proof branch, the Kummer and minimal signed zero-sum gaps have been eliminated, leaving **9 explicit `sorry` occurrences**:
+The initial scaffold contained **11 explicit `sorry` occurrences**. On the current proof branch, the Kummer and minimal signed zero-sum gaps have been eliminated, leaving **8 explicit `sorry` occurrences**:
 
-- `MinusOne.lean`: `pow_mod_eq_parity_sign`, `noBorrow_iff_proper_signed_zero_sum`, `uniform_case_one_borrow_of_gt`, `uniform_case_one_borrow_edge`, `mixed_case_one_borrow_of_gt`, `exceptional_mixed_no_one_borrow`, `exceptional_mixed_two_borrow_witness`, `minus_one_valuation`.
+- `MinusOne.lean`: `noBorrow_iff_proper_signed_zero_sum`, `uniform_case_one_borrow_of_gt`, `uniform_case_one_borrow_edge`, `mixed_case_one_borrow_of_gt`, `exceptional_mixed_no_one_borrow`, `exceptional_mixed_two_borrow_witness`, `minus_one_valuation`.
 - `Scaling.lean`: `scaling_valuation`.
 
 The repository CI checks this count mechanically on every run.

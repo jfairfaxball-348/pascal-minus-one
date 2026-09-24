@@ -12,10 +12,41 @@ def minusOneExpectedValuation (m p A B : ℕ) : ℕ :=
   else if (A = m ∧ B = 0) ∨ (A = 0 ∧ B = m) then 1
   else 0
 
-/-- TODO(MinusOne-1): convert `p % m = m-1` into alternating signs for powers of `p`. -/
+/-- Convert `p % m = m-1` into alternating signs for powers of `p`. -/
 theorem pow_mod_eq_parity_sign {m p i : ℕ} (hm : 2 ≤ m) (hpm : p % m = m - 1) :
     p ^ i % m = if Even i then 1 else m - 1 := by
-  sorry
+  have hpmod : p ≡ m - 1 [MOD m] := by
+    rw [Nat.ModEq, Nat.mod_eq_of_lt (by omega : m - 1 < m)]
+    exact hpm
+  have hsq : (m - 1) ^ 2 ≡ 1 [MOD m] := by
+    rw [Nat.ModEq, Nat.mod_eq_of_lt (by omega : 1 < m)]
+    have hm1 : m - 1 + 1 = m := Nat.sub_add_cancel (by omega)
+    have hm2 : m - 2 + 2 = m := Nat.sub_add_cancel hm
+    have heq : (m - 1) ^ 2 = m * (m - 2) + 1 := by
+      nlinarith
+    rw [heq]
+    simp [Nat.add_mod, Nat.mul_mod, Nat.mod_eq_of_lt (by omega : 1 < m)]
+  by_cases hi : Even i
+  · rw [if_pos hi]
+    obtain ⟨j, rfl⟩ := hi
+    have hpow : p ^ (j + j) ≡ 1 [MOD m] := by
+      calc
+        p ^ (j + j) ≡ (m - 1) ^ (j + j) [MOD m] := hpmod.pow _
+        _ = ((m - 1) ^ 2) ^ j := by rw [← two_mul j, pow_mul]
+        _ ≡ 1 ^ j [MOD m] := hsq.pow j
+        _ = 1 := by simp
+    simpa [Nat.ModEq, Nat.mod_eq_of_lt (by omega : 1 < m)] using hpow
+  · rw [if_neg hi]
+    have hodd : Odd i := Nat.not_even_iff_odd.mp hi
+    obtain ⟨j, rfl⟩ := hodd
+    have hpow : p ^ (2 * j + 1) ≡ m - 1 [MOD m] := by
+      calc
+        p ^ (2 * j + 1) ≡ (m - 1) ^ (2 * j + 1) [MOD m] := hpmod.pow _
+        _ = ((m - 1) ^ 2) ^ j * (m - 1) := by
+          rw [pow_add, pow_one, pow_mul]
+        _ ≡ 1 ^ j * (m - 1) [MOD m] := (hsq.pow j).mul Nat.ModEq.rfl
+        _ = m - 1 := by simp
+    simpa [Nat.ModEq, Nat.mod_eq_of_lt (by omega : m - 1 < m)] using hpow
 
 /-- TODO(MinusOne-2): no-borrow admissible indices are proper zero-sum signed submultisets. -/
 theorem noBorrow_iff_proper_signed_zero_sum

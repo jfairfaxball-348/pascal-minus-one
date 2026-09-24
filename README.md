@@ -26,21 +26,15 @@ The Lean theorem is named `PascalMinusOne.minus_one_valuation`.
 
 ## Current status
 
-This is a **scaffold**, not a completed formal proof. Mathlib already supplies Kummer's theorem as `padicValNat_choose`; this project wraps that theorem and isolates the remaining digitwise, signed-token, witness, exceptional-case, and scaling lemmas.
+The proof-formalisation core is complete on the current proof branch. Both `PascalMinusOne.minus_one_valuation` and `PascalMinusOne.scaling_valuation` are fully proved, and the repository contains **0 explicit `sorry` occurrences**. CI enforces the zero-`sorry` count alongside `lake build`, the Python regression tests, and the independent reference sweep.
 
-The initial source contains explicit `sorry` placeholders. They are intentionally visible and documented in `notes/proof-outline.md`; do not treat a successful build as completion while any remain. Run
-
-```bash
-grep -R --line-number --fixed-string 'sorry' PascalMinusOne
-```
-
-to count them.
+The next formal layer is the advertised `m = 3,4,6` corollaries in `PascalMinusOne/SmallModuli.lean`. Those corollaries are not yet stated as verified; their exact scope must respect the existing literature boundary and whatever plus-one branch is formally available.
 
 ## Layout
 
 - `PascalMinusOne/Basic.lean`: admissible indices and `G`.
 - `PascalMinusOne/Digits.lean`: base-`p` parity digit sums.
-- `PascalMinusOne/Kummer.lean`: Mathlib Kummer wrapper and zero-borrow TODO.
+- `PascalMinusOne/Kummer.lean`: Mathlib Kummer wrapper and proved zero-borrow/digitwise bridge.
 - `PascalMinusOne/SignedTokens.lean`: reusable `±1` zero-sum layer.
 - `PascalMinusOne/MinusOne.lean`: branch lemmas and main theorem.
 - `PascalMinusOne/Scaling.lean`: trailing-zero scaling theorem.

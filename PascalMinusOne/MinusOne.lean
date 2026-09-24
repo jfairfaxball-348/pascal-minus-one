@@ -897,9 +897,24 @@ theorem uniform_case_one_borrow_edge
     rw [padicVal_choose_eq_carryCount hkn (Nat.lt_succ_self t), hcount]
   exact ⟨t, s, k, hst, htocc, hsocc, rfl, ⟨hkpos, hkN, hmk⟩, hval⟩
 
+/-- A natural digit list with zero total digit mass evaluates to zero in every base. -/
+lemma ofDigits_eq_zero_of_sum_eq_zero (p : ℕ) :
+    ∀ L : List ℕ, L.sum = 0 → Nat.ofDigits p L = 0 := by
+  intro L
+  induction L with
+  | nil =>
+      simp
+  | cons d ds ih =>
+      intro hsum
+      simp only [List.sum_cons] at hsum
+      have hd : d = 0 := by omega
+      have hds : ds.sum = 0 := by omega
+      subst d
+      simp [Nat.ofDigits_cons, ih hds]
+
 /-- A little-endian natural digit list with total digit mass one is bounded by
 its highest available place value. -/
-lemma ofDigits_le_pow_length_pred_of_sum_eq_one {p : ℕ} :
+lemma ofDigits_le_pow_length_pred_of_sum_eq_one {p : ℕ} (hp : 0 < p) :
     ∀ L : List ℕ, L.sum = 1 →
       Nat.ofDigits p L ≤ p ^ (L.length - 1) := by
   intro L
@@ -917,31 +932,25 @@ lemma ofDigits_le_pow_length_pred_of_sum_eq_one {p : ℕ} :
           intro hnil
           subst ds
           simp at htail
-        have hlen : 1 ≤ ds.length := by
-          exact List.length_pos_iff_ne_nil.mpr hdsne
+        have hlen : 1 ≤ ds.length :=
+          List.length_pos_iff_ne_nil.mpr hdsne
         have hih := ih htail
         simp only [Nat.ofDigits_cons, zero_add, List.length_cons]
         calc
           p * Nat.ofDigits p ds ≤ p * p ^ (ds.length - 1) :=
             Nat.mul_le_mul_left p hih
-          _ = p ^ (ds.length - 1) * p := by
-            rw [Nat.mul_comm]
+          _ = p ^ (ds.length - 1) * p := by rw [Nat.mul_comm]
           _ = p ^ ((ds.length - 1) + 1) := (pow_succ p (ds.length - 1)).symm
           _ = p ^ ds.length := by rw [Nat.sub_add_cancel hlen]
-      · have hdpos : 0 < d := Nat.pos_of_ne_zero hd
-        have hd1 : d = 1 := by omega
+      · have hd1 : d = 1 := by
+          have hdpos : 0 < d := Nat.pos_of_ne_zero hd
+          omega
         have htail : ds.sum = 0 := by omega
-        have hofd : Nat.ofDigits p ds = 0 := by
-          induction ds with
-          | nil => simp
-          | cons e es ih0 =>
-              simp only [List.sum_cons] at htail
-              have he : e = 0 := by omega
-              have hes : es.sum = 0 := by omega
-              subst e
-              simp [Nat.ofDigits_cons, ih0 hes]
+        have hofd : Nat.ofDigits p ds = 0 :=
+          ofDigits_eq_zero_of_sum_eq_zero p ds htail
         subst d
-        simp [Nat.ofDigits_cons, hofd]
+        simp only [Nat.ofDigits_cons, hofd, mul_zero, add_zero, List.length_cons]
+        exact (pow_pos hp ds.length).one_le
 
 /-- In the mixed token case with `p > m`, the witness `m * p^(t-1)` creates
 exactly one carry at the leading boundary. -/
@@ -1020,7 +1029,7 @@ theorem mixed_case_one_borrow_of_gt
   have hNmodle : N % p ^ t ≤ p ^ (t - 1) := by
     rw [Nat.self_mod_pow_eq_ofDigits_take t N hp2]
     have hbound :=
-      ofDigits_le_pow_length_pred_of_sum_eq_one (p := p) (L.take t) hprefsum
+      ofDigits_le_pow_length_pred_of_sum_eq_one (p := p) hp0 (L.take t) hprefsum
     rw [htakeLen] at hbound
     exact hbound
   let k := m * p ^ (t - 1)

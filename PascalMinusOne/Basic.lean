@@ -18,7 +18,7 @@ def Admissible (N m k : ℕ) : Prop :=
 
 @[simp] theorem mem_admissibleIndices_iff {N m k : ℕ} :
     k ∈ admissibleIndices N m ↔ Admissible N m k := by
-  simp [admissibleIndices, Admissible]
+  simp [admissibleIndices, Admissible, and_left_comm, and_comm]
 
 theorem m_mem_admissibleIndices {N m : ℕ} (hm : 0 < m) (hmN : m < N) :
     m ∈ admissibleIndices N m := by

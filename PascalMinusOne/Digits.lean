@@ -32,9 +32,9 @@ def Occupied (p N i : ℕ) : Prop :=
       (d + (parityDigitSums ds).2, (parityDigitSums ds).1) := rfl
 
 @[simp] theorem evenDigitSum_zero (p : ℕ) : evenDigitSum p 0 = 0 := by
-  simp [evenDigitSum, parityDigitSums]
+  simp [evenDigitSum]
 
 @[simp] theorem oddDigitSum_zero (p : ℕ) : oddDigitSum p 0 = 0 := by
-  simp [oddDigitSum, parityDigitSums]
+  simp [oddDigitSum]
 
 end PascalMinusOne

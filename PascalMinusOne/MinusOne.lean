@@ -1520,7 +1520,7 @@ theorem exceptional_mixed_no_one_borrow
       rw [← hprevform]
       simpa using hkmodprev_le
     have hb1 : b ≤ 1 :=
-      (Nat.mul_le_mul_right (pow_pos hp0 s)).mp hbmul
+      Nat.le_of_mul_le_mul_right hbmul (pow_pos hp0 s)
     have hcur := hprefix_gt_of_carry hiCarry
     have hNt : N % p ^ t = p ^ s :=
       hNmod_mid hst le_rfl

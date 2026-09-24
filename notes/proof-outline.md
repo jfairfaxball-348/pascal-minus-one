@@ -10,14 +10,12 @@ The target is `PascalMinusOne.minus_one_valuation` for `m ≥ 3`, `m ∣ N`, `m 
 4. **Uniform cases.** Produce a one-borrow witness. For `p > m`, use the high-digit construction from the hand proof. For `p = m-1`, use the repaired witness `p^(t-1) + p^s`, where `s < t` is another occupied exponent of the same parity.
 5. **Mixed case, `p > m`.** Reduce to two occupied opposite-parity powers and construct a one-borrow witness.
 6. **Exceptional mixed case, `p = m-1`.** Exclude one borrow using the `m` identical-token argument, then construct a two-borrow witness.
-7. **Scaling.** Remove a common factor `p^c` from both `N` and `m` by trailing-zero invariance of carries.
+7. **Scaling.** Remove a common factor `p^c` from both `N` and `m`. The formal proof uses `Nat.digits_base_pow_mul` to show digit-sum invariance under appending trailing base-`p` zeros, the digit-sum form of Kummer to preserve individual binomial valuations, and an exact correspondence between scaled and unscaled admissible indices.
 
-## Scaffold proof gaps
+## Formalisation status
 
-The initial scaffold contained **11 explicit `sorry` occurrences**. On the current proof branch, the Kummer and minimal signed zero-sum gaps have been eliminated, leaving **1 explicit `sorry` occurrence**:
+The initial scaffold contained **11 explicit `sorry` occurrences**. On the current proof branch, all named proof gaps have been eliminated, leaving **0 explicit `sorry` occurrences**.
 
-- `Scaling.lean`: `scaling_valuation`.
+In particular, `Scaling.lean` now proves `scaling_valuation`, completing the proof-formalisation core built around `minus_one_valuation` and scaling.
 
-The repository CI checks this count mechanically on every run.
-
-No theorem with a `sorry` should be described as formally verified.
+The repository CI checks the zero-`sorry` count mechanically on every run. Computational regression tests and the reference sweep remain evidence checks alongside the Lean proofs; they are not substitutes for proof.

@@ -1792,6 +1792,147 @@ theorem minus_one_valuation
     (hp : p.Prime) (hpm : p % m = m - 1) :
     padicValNat p (G N m) =
       minusOneExpectedValuation m p (evenDigitSum p N) (oddDigitSum p N) := by
-  sorry
+  have hm0 : 0 < m := by omega
+  have hNne : N ≠ 0 := by omega
+  have hdigitsNe : Nat.digits p N ≠ [] :=
+    Nat.digits_ne_nil_iff_ne_zero.mpr hNne
+  have hsumpos : 0 < (Nat.digits p N).sum :=
+    List.sum_pos_iff_exists_pos_nat.mpr
+      ⟨(Nat.digits p N).getLast hdigitsNe, List.getLast_mem hdigitsNe,
+        Nat.pos_of_ne_zero (Nat.getLast_digit_ne_zero p hNne)⟩
+  have hABpos :
+      0 < evenDigitSum p N + oddDigitSum p N := by
+    simpa [evenDigitSum, oddDigitSum, parityDigitSums_add_eq_sum] using hsumpos
+  have hzero :
+      SignedZeroSum m (evenDigitSum p N) (oddDigitSum p N) :=
+    (dvd_iff_signedZeroSum_digitSums
+      (m := m) (p := p) (k := N) (by omega) hpm).1 hmN
+  have hpCase : p = m - 1 ∨ m < p := by
+    by_cases hedge : p = m - 1
+    · exact Or.inl hedge
+    · right
+      by_contra hnot
+      have hple : p ≤ m := Nat.le_of_not_gt hnot
+      by_cases hlt : p < m
+      · have hpmod : p % m = p := Nat.mod_eq_of_lt hlt
+        apply hedge
+        omega
+      · have hpeq : p = m := by omega
+        subst p
+        rw [Nat.mod_self] at hpm
+        omega
+  by_cases hproper :
+      HasProperZeroSubmultiset m (evenDigitSum p N) (oddDigitSum p N)
+  · have hwit0 :
+        ∃ k, Admissible N m k ∧ padicValNat p (N.choose k) = 0 :=
+      (noBorrow_iff_proper_signed_zero_sum hm hp hpm hmN).2 hproper
+    have hG0 : padicValNat p (G N m) = 0 :=
+      padicVal_G_eq_of_lower_bound_of_witness
+        hm0 hNm hp (fun _ _ ↦ Nat.zero_le _) hwit0
+    have hnotminimal :
+        ¬ MinimalSignedZeroSum m (evenDigitSum p N) (oddDigitSum p N) := by
+      intro hminimal
+      exact hminimal.2.2 hproper
+    have hnotshapes :
+        ¬ ((evenDigitSum p N = 1 ∧ oddDigitSum p N = 1) ∨
+          (evenDigitSum p N = m ∧ oddDigitSum p N = 0) ∨
+          (evenDigitSum p N = 0 ∧ oddDigitSum p N = m)) := by
+      intro hshapes
+      exact hnotminimal
+        ((minimal_signed_zero_sum_classification hm).2 hshapes)
+    have hnotMixed :
+        ¬ (evenDigitSum p N = 1 ∧ oddDigitSum p N = 1) := by
+      intro hmix
+      exact hnotshapes (Or.inl hmix)
+    have hnotUniform :
+        ¬ ((evenDigitSum p N = m ∧ oddDigitSum p N = 0) ∨
+          (evenDigitSum p N = 0 ∧ oddDigitSum p N = m)) := by
+      intro hunif
+      exact hnotshapes (Or.inr hunif)
+    have hnotFirst :
+        ¬ (evenDigitSum p N = 1 ∧ oddDigitSum p N = 1 ∧ p = m - 1) := by
+      rintro ⟨heven, hodd, _⟩
+      exact hnotMixed ⟨heven, hodd⟩
+    have hnotSecond :
+        ¬ (evenDigitSum p N = 1 ∧ oddDigitSum p N = 1 ∧ m < p) := by
+      rintro ⟨heven, hodd, _⟩
+      exact hnotMixed ⟨heven, hodd⟩
+    simpa [minusOneExpectedValuation, hnotFirst, hnotSecond, hnotUniform] using hG0
+  · have hminimal :
+        MinimalSignedZeroSum m (evenDigitSum p N) (oddDigitSum p N) :=
+      ⟨hABpos, hzero, hproper⟩
+    have hpositive :
+        ∀ k, Admissible N m k → 1 ≤ padicValNat p (N.choose k) := by
+      intro k hkadm
+      have hne : padicValNat p (N.choose k) ≠ 0 := by
+        intro hval0
+        apply hproper
+        exact
+          (noBorrow_iff_proper_signed_zero_sum hm hp hpm hmN).1
+            ⟨k, hkadm, hval0⟩
+      omega
+    rcases (minimal_signed_zero_sum_classification hm).1 hminimal with
+      hmixed | huniformLeft | huniformRight
+    · rcases hmixed with ⟨heven, hodd⟩
+      have hmixed' :
+          evenDigitSum p N = 1 ∧ oddDigitSum p N = 1 :=
+        ⟨heven, hodd⟩
+      rcases hpCase with hedge | hgt
+      · have hnoOne :
+            ∀ k, Admissible N m k → padicValNat p (N.choose k) ≠ 1 :=
+          exceptional_mixed_no_one_borrow hm hp hedge hmN hNm hmixed'
+        have hlower2 :
+            ∀ k, Admissible N m k → 2 ≤ padicValNat p (N.choose k) := by
+          intro k hkadm
+          have hpos := hpositive k hkadm
+          have hne1 := hnoOne k hkadm
+          omega
+        have hwit2 :
+            ∃ k, Admissible N m k ∧ padicValNat p (N.choose k) = 2 :=
+          exceptional_mixed_two_borrow_witness hm hp hedge hmN hNm hmixed'
+        have hG2 : padicValNat p (G N m) = 2 :=
+          padicVal_G_eq_of_lower_bound_of_witness
+            hm0 hNm hp hlower2 hwit2
+        simpa [minusOneExpectedValuation, heven, hodd, hedge] using hG2
+      · have hwit1 :
+            ∃ k, Admissible N m k ∧ padicValNat p (N.choose k) = 1 :=
+          mixed_case_one_borrow_of_gt hm hp hpm hgt hmixed'
+        have hG1 : padicValNat p (G N m) = 1 :=
+          padicVal_G_eq_of_lower_bound_of_witness
+            hm0 hNm hp hpositive hwit1
+        have hneEdge : p ≠ m - 1 := by omega
+        simpa [minusOneExpectedValuation, heven, hodd, hgt, hneEdge] using hG1
+    · rcases huniformLeft with ⟨heven, hodd⟩
+      have huniform :
+          (evenDigitSum p N = m ∧ oddDigitSum p N = 0) ∨
+          (evenDigitSum p N = 0 ∧ oddDigitSum p N = m) :=
+        Or.inl ⟨heven, hodd⟩
+      have hwit1 :
+          ∃ k, Admissible N m k ∧ padicValNat p (N.choose k) = 1 := by
+        rcases hpCase with hedge | hgt
+        · rcases uniform_case_one_borrow_edge hm hp hedge hmN hNm huniform with
+            ⟨t, s, k, hst, htocc, hsocc, hkdef, hkadm, hval⟩
+          exact ⟨k, hkadm, hval⟩
+        · exact uniform_case_one_borrow_of_gt hm hp hpm hgt hmN hNm huniform
+      have hG1 : padicValNat p (G N m) = 1 :=
+        padicVal_G_eq_of_lower_bound_of_witness
+          hm0 hNm hp hpositive hwit1
+      simpa [minusOneExpectedValuation, heven, hodd] using hG1
+    · rcases huniformRight with ⟨heven, hodd⟩
+      have huniform :
+          (evenDigitSum p N = m ∧ oddDigitSum p N = 0) ∨
+          (evenDigitSum p N = 0 ∧ oddDigitSum p N = m) :=
+        Or.inr ⟨heven, hodd⟩
+      have hwit1 :
+          ∃ k, Admissible N m k ∧ padicValNat p (N.choose k) = 1 := by
+        rcases hpCase with hedge | hgt
+        · rcases uniform_case_one_borrow_edge hm hp hedge hmN hNm huniform with
+            ⟨t, s, k, hst, htocc, hsocc, hkdef, hkadm, hval⟩
+          exact ⟨k, hkadm, hval⟩
+        · exact uniform_case_one_borrow_of_gt hm hp hpm hgt hmN hNm huniform
+      have hG1 : padicValNat p (G N m) = 1 :=
+        padicVal_G_eq_of_lower_bound_of_witness
+          hm0 hNm hp hpositive hwit1
+      simpa [minusOneExpectedValuation, heven, hodd] using hG1
 
 end PascalMinusOne

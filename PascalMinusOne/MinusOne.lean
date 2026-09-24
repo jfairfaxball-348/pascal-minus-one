@@ -1644,7 +1644,7 @@ theorem exceptional_mixed_two_borrow_witness
         apply hopposite
         have htEq : t = s + 2 := by omega
         rw [htEq]
-        exact (Nat.even_add_two).symm
+        simp [Nat.even_add']
       omega
   have hpowst : p ^ s < p ^ t :=
     Nat.pow_lt_pow_right hp1 hst

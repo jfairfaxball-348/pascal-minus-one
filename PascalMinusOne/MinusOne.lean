@@ -79,6 +79,135 @@ lemma dvd_iff_signedZeroSum_digitSums {m p k : ℕ}
     ofDigits_neg_one_eq_parityDigitSums] using
     (Nat.dvd_iff_dvd_ofDigits m p (-1 : ℤ) hdiv k)
 
+/-- The two parity digit totals add to the ordinary digit sum. -/
+lemma parityDigitSums_add_eq_sum (L : List ℕ) :
+    (parityDigitSums L).1 + (parityDigitSums L).2 = L.sum := by
+  induction L with
+  | nil => rfl
+  | cons d ds ih =>
+      simp [parityDigitSums, ih, Nat.add_assoc, Nat.add_comm, Nat.add_left_comm]
+
+/-- A suffix of zero digits does not change the even/odd digit totals. -/
+lemma parityDigitSums_append_replicate_zero (L : List ℕ) (n : ℕ) :
+    parityDigitSums (L ++ List.replicate n 0) = parityDigitSums L := by
+  have hzero : ∀ r : ℕ, parityDigitSums (List.replicate r 0) = (0, 0) := by
+    intro r
+    induction r with
+    | zero => rfl
+    | succ r ih => simp [List.replicate_succ, parityDigitSums, ih]
+  induction L with
+  | nil => simpa using hzero n
+  | cons d ds ih =>
+      simp only [List.cons_append, parityDigitSums_cons, ih]
+
+/-- Padding a base-`p` digit list to a fixed length leaves its parity totals unchanged. -/
+lemma parityDigitSums_digitsAppend (p l n : ℕ) :
+    parityDigitSums (Nat.digitsAppend p l n) = parityDigitSums (Nat.digits p n) := by
+  simp [Nat.digitsAppend, parityDigitSums_append_replicate_zero]
+
+/-- Componentwise-bounded digit lists have componentwise-bounded parity totals. -/
+lemma parityDigitSums_mono {S D : List ℕ}
+    (h : List.Forall₂ (· ≤ ·) S D) :
+    (parityDigitSums S).1 ≤ (parityDigitSums D).1 ∧
+      (parityDigitSums S).2 ≤ (parityDigitSums D).2 := by
+  induction h with
+  | nil => simp [parityDigitSums]
+  | @cons s d S D hsd htail ih =>
+      simp only [parityDigitSums_cons, Prod.fst, Prod.snd]
+      omega
+
+/-- Any prescribed pair of parity totals below those of a digit list can be realised by
+a componentwise-bounded digit list of the same length. -/
+lemma exists_subdigits_with_parityDigitSums
+    (D : List ℕ) {a b : ℕ}
+    (ha : a ≤ (parityDigitSums D).1)
+    (hb : b ≤ (parityDigitSums D).2) :
+    ∃ S : List ℕ,
+      List.Forall₂ (· ≤ ·) S D ∧ parityDigitSums S = (a, b) := by
+  induction D generalizing a b with
+  | nil =>
+      simp [parityDigitSums] at ha hb
+      have ha0 : a = 0 := by omega
+      have hb0 : b = 0 := by omega
+      subst a
+      subst b
+      exact ⟨[], List.Forall₂.nil, rfl⟩
+  | cons d D ih =>
+      simp only [parityDigitSums_cons, Prod.fst, Prod.snd] at ha hb
+      by_cases had : a ≤ d
+      · obtain ⟨T, hT, hpar⟩ :=
+          ih (a := b) (b := 0) hb (Nat.zero_le _)
+        refine ⟨a :: T, List.Forall₂.cons had hT, ?_⟩
+        simp [parityDigitSums, hpar]
+      · have hda : d < a := Nat.lt_of_not_ge had
+        have htail : a - d ≤ (parityDigitSums D).2 := by omega
+        obtain ⟨T, hT, hpar⟩ := ih (a := b) (b := a - d) hb htail
+        refine ⟨d :: T, List.Forall₂.cons (Nat.le_refl d) hT, ?_⟩
+        simp [parityDigitSums, hpar]
+        omega
+
+/-- Componentwise comparison of equal-length digit lists is respected by `Nat.ofDigits`. -/
+lemma ofDigits_le_of_forall₂ (p : ℕ) {S D : List ℕ}
+    (h : List.Forall₂ (· ≤ ·) S D) :
+    Nat.ofDigits p S ≤ Nat.ofDigits p D := by
+  induction h with
+  | nil => rfl
+  | @cons s d S D hsd htail ih =>
+      simp only [Nat.ofDigits]
+      exact Nat.add_le_add hsd (Nat.mul_le_mul_left p ih)
+
+/-- Componentwise comparison also compares ordinary digit sums. -/
+lemma sum_le_of_forall₂ {S D : List ℕ}
+    (h : List.Forall₂ (· ≤ ·) S D) : S.sum ≤ D.sum := by
+  induction h with
+  | nil => rfl
+  | @cons s d S D hsd htail ih =>
+      simp only [List.sum_cons]
+      exact Nat.add_le_add hsd ih
+
+/-- If two equal-length digit lists are componentwise ordered and not equal, their digit sums
+are strictly ordered. -/
+lemma sum_lt_of_forall₂_of_ne {S D : List ℕ}
+    (h : List.Forall₂ (· ≤ ·) S D) (hne : S ≠ D) :
+    S.sum < D.sum := by
+  induction h with
+  | nil => exact (hne rfl).elim
+  | @cons s d S D hsd htail ih =>
+      simp only [List.sum_cons]
+      by_cases hsdEq : s = d
+      · subst d
+        have htailNe : S ≠ D := by
+          intro hEq
+          apply hne
+          simp [hEq]
+        exact Nat.add_lt_add_left (ih htailNe) s
+      · have hslt : s < d := lt_of_le_of_ne hsd hsdEq
+        have hsum : S.sum ≤ D.sum := sum_le_of_forall₂ htail
+        omega
+
+/-- The head of the `i`-fold tail, with default zero, is `List.getD i 0`. -/
+lemma head_drop_eq_getD (L : List ℕ) (i : ℕ) :
+    (L.drop i).head! = L.getD i 0 := by
+  induction i generalizing L with
+  | zero =>
+      cases L <;> rfl
+  | succ i ih =>
+      cases L with
+      | nil => simp
+      | cons d D => simpa using ih (L := D)
+
+/-- For a valid base-`p` digit list, `digitAt` of its `ofDigits` value recovers `getD`. -/
+lemma digitAt_ofDigits_eq_getD {p i : ℕ} (hp : 2 ≤ p) (L : List ℕ)
+    (hL : ∀ d ∈ L, d < p) :
+    digitAt p (Nat.ofDigits p L) i = L.getD i 0 := by
+  rw [digitAt, Nat.ofDigits_div_pow_eq_ofDigits_drop i (by omega) L hL,
+    Nat.ofDigits_mod_eq_head!]
+  have hhead : (L.drop i).head! < p := by
+    by_cases hnil : L.drop i = []
+    · simp [hnil, hp]
+    · exact hL _ (List.mem_of_mem_drop (List.head!_mem_self hnil))
+  rw [Nat.mod_eq_of_lt hhead, head_drop_eq_getD]
+
 /-- TODO(MinusOne-2): no-borrow admissible indices are proper zero-sum signed submultisets. -/
 theorem noBorrow_iff_proper_signed_zero_sum
     {m p N : ℕ} (hm : 3 ≤ m) (hp : p.Prime) (hpm : p % m = m - 1) (hmN : m ∣ N) :

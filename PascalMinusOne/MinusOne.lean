@@ -3,6 +3,7 @@ import PascalMinusOne.Digits
 import PascalMinusOne.Kummer
 import PascalMinusOne.SignedTokens
 import Mathlib.Data.Nat.Digits.Div
+import Mathlib.Data.List.GetD
 
 namespace PascalMinusOne
 
@@ -390,7 +391,7 @@ theorem noBorrow_iff_proper_signed_zero_sum
         _ = a + b := by rw [hpar]
     have hsumpos : 0 < S.sum := by omega
     have hsumle : S.sum ≤ Nat.ofDigits p S :=
-      Nat.sum_le_ofDigits S (by omega)
+      Nat.sum_le_ofDigits S (Nat.le_of_lt hp.one_lt)
     have hkpos : 0 < k := by
       dsimp [k]
       exact hsumpos.trans_le hsumle

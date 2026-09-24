@@ -418,7 +418,35 @@ theorem noBorrow_iff_proper_signed_zero_sum
       (padicVal_choose_eq_zero_iff_digitwiseLE (p := p) (n := N) (k := k) hkn).2 hdigit
     exact ⟨k, ⟨hkpos, hkN, hmk⟩, hkval⟩
 
-/-- TODO(MinusOne-3): uniform token cases admit a one-borrow witness when `p > m`. -/
+/-- A digit is bounded by the parity total containing its position. -/
+lemma getD_le_parityDigitSums (L : List ℕ) (i : ℕ) :
+    L.getD i 0 ≤
+      if Even i then (parityDigitSums L).1 else (parityDigitSums L).2 := by
+  induction L generalizing i with
+  | nil =>
+      simp [parityDigitSums]
+  | cons d ds ih =>
+      cases i with
+      | zero =>
+          simp [parityDigitSums]
+      | succ i =>
+          have h := ih i
+          by_cases hi : Even i
+          · simp [parityDigitSums, Nat.succ_eq_add_one, Nat.even_add_one, hi] at h ⊢
+            exact h
+          · simp [parityDigitSums, Nat.succ_eq_add_one, Nat.even_add_one, hi] at h ⊢
+            omega
+
+/-- The arithmetic digit accessor is bounded by the corresponding parity digit sum. -/
+lemma digitAt_le_parityDigitSum {p N i : ℕ} (hp : 2 ≤ p) :
+    digitAt p N i ≤
+      if Even i then evenDigitSum p N else oddDigitSum p N := by
+  have h := getD_le_parityDigitSums (Nat.digits p N) i
+  rw [Nat.getD_digits N i hp] at h
+  simpa [digitAt, evenDigitSum, oddDigitSum] using h
+
+/-- In a uniform token case with `p > m`, placing the digit `m` immediately below
+the leading occupied digit forces exactly one borrow. -/
 theorem uniform_case_one_borrow_of_gt
     {m p N : ℕ} (hm : 3 ≤ m) (hp : p.Prime) (hpm : p % m = m - 1)
     (hpmgt : m < p) (hmN : m ∣ N) (hNm : m < N)
@@ -426,9 +454,156 @@ theorem uniform_case_one_borrow_of_gt
       (evenDigitSum p N = m ∧ oddDigitSum p N = 0) ∨
       (evenDigitSum p N = 0 ∧ oddDigitSum p N = m)) :
     ∃ k, Admissible N m k ∧ padicValNat p (N.choose k) = 1 := by
-  sorry
+  letI : Fact p.Prime := ⟨hp⟩
+  have hp0 : 0 < p := hp.pos
+  have hp1 : 1 < p := hp.one_lt
+  have hp2 : 2 ≤ p := hp.two_le
+  have hNpos : 0 < N := by omega
+  have hNne : N ≠ 0 := Nat.ne_of_gt hNpos
+  let t := Nat.log p N
+  have hpowle : p ^ t ≤ N := by
+    dsimp [t]
+    exact Nat.pow_log_le_self p hNne
+  have hNlt : N < p ^ (t + 1) := by
+    dsimp [t]
+    simpa [Nat.succ_eq_add_one] using Nat.lt_pow_succ_log_self hp1 N
+  have hqone : 1 ≤ N / p ^ t := by
+    rw [Nat.le_div_iff_mul_le (pow_pos hp0 t)]
+    simpa using hpowle
+  have hqpos : 0 < N / p ^ t := by omega
+  have hqlt : N / p ^ t < p := by
+    rw [Nat.div_lt_iff_lt_mul (pow_pos hp0 t)]
+    simpa [pow_succ, Nat.mul_comm] using hNlt
+  have htocc : 0 < digitAt p N t := by
+    rw [digitAt, Nat.mod_eq_of_lt hqlt]
+    exact hqpos
+  have htdata : 1 ≤ t ∧ digitAt p N (t - 1) = 0 := by
+    rcases huniform with hevenUniform | hoddUniform
+    · rcases hevenUniform with ⟨heven, hodd⟩
+      have htEven : Even t := by
+        by_contra htNotEven
+        have hbound :=
+          digitAt_le_parityDigitSum (p := p) (N := N) (i := t) hp2
+        rw [if_neg htNotEven, hodd] at hbound
+        omega
+      have htpos : 0 < t := by
+        by_contra htNotPos
+        have ht0 : t = 0 := Nat.eq_zero_of_not_pos htNotPos
+        have hNP : N < p := by
+          simpa [ht0] using hNlt
+        have hdigit0 : digitAt p N 0 = N := by
+          simp [digitAt, Nat.mod_eq_of_lt hNP]
+        have hbound :=
+          digitAt_le_parityDigitSum (p := p) (N := N) (i := 0) hp2
+        have hNle : N ≤ m := by
+          simpa [hdigit0, heven] using hbound
+        omega
+      have ht1 : 1 ≤ t := by omega
+      have hpredNotEven : ¬ Even (t - 1) := by
+        have h := htEven
+        rw [← Nat.sub_add_cancel ht1, Nat.even_add_one] at h
+        exact h
+      have hbound :=
+        digitAt_le_parityDigitSum (p := p) (N := N) (i := t - 1) hp2
+      rw [if_neg hpredNotEven, hodd] at hbound
+      exact ⟨ht1, by omega⟩
+    · rcases hoddUniform with ⟨heven, hodd⟩
+      have htNotEven : ¬ Even t := by
+        intro htEven
+        have hbound :=
+          digitAt_le_parityDigitSum (p := p) (N := N) (i := t) hp2
+        rw [if_pos htEven, heven] at hbound
+        omega
+      have htpos : 0 < t := by
+        by_contra htNotPos
+        have ht0 : t = 0 := Nat.eq_zero_of_not_pos htNotPos
+        apply htNotEven
+        simp [ht0]
+      have ht1 : 1 ≤ t := by omega
+      have hpredEven : Even (t - 1) := by
+        by_contra hpredNotEven
+        apply htNotEven
+        rw [← Nat.sub_add_cancel ht1, Nat.even_add_one]
+        exact hpredNotEven
+      have hbound :=
+        digitAt_le_parityDigitSum (p := p) (N := N) (i := t - 1) hp2
+      rw [if_pos hpredEven, heven] at hbound
+      exact ⟨ht1, by omega⟩
+  rcases htdata with ⟨ht1, hpredzero⟩
+  have hNmod : N % p ^ t = N % p ^ (t - 1) := by
+    have h := mod_pow_succ_eq_mod_add_digitAt p N (t - 1)
+    rw [Nat.sub_add_cancel ht1] at h
+    simpa [hpredzero] using h
+  have hNmodlt : N % p ^ t < p ^ (t - 1) := by
+    rw [hNmod]
+    exact Nat.mod_lt _ (pow_pos hp0 _)
+  let k := m * p ^ (t - 1)
+  have hpowpredpos : 0 < p ^ (t - 1) := pow_pos hp0 _
+  have hkpos : 0 < k := by
+    dsimp [k]
+    exact Nat.mul_pos (by omega) hpowpredpos
+  have hkltpow : k < p ^ t := by
+    have hmul : m * p ^ (t - 1) < p * p ^ (t - 1) :=
+      (Nat.mul_lt_mul_right hpowpredpos).2 hpmgt
+    dsimp [k]
+    calc
+      m * p ^ (t - 1) < p * p ^ (t - 1) := hmul
+      _ = p ^ (t - 1) * p := Nat.mul_comm _ _
+      _ = p ^ ((t - 1) + 1) := (pow_succ p (t - 1)).symm
+      _ = p ^ t := by rw [Nat.sub_add_cancel ht1]
+  have hkN : k < N := hkltpow.trans_le hpowle
+  have hkn : k ≤ N := hkN.le
+  have hmk : m ∣ k := by
+    dsimp [k]
+    exact dvd_mul_right m _
+  have hnocarry_of_lt {j : ℕ} (hjt : j < t) : ¬ CarryAt p N k j := by
+    apply
+      (not_carryAt_iff_mod_pow_le
+        (p := p) (n := N) (k := k) (i := j) hp0 hkn).2
+    have hjle : j ≤ t - 1 := by omega
+    have hdvd : p ^ j ∣ k := by
+      dsimp [k]
+      exact dvd_mul_of_dvd_right (Nat.pow_dvd_pow p hjle) m
+    rw [Nat.mod_eq_zero_of_dvd hdvd]
+    exact Nat.zero_le _
+  have hpowpred_le_k : p ^ (t - 1) ≤ k := by
+    dsimp [k]
+    have hm1 : 1 ≤ m := by omega
+    calc
+      p ^ (t - 1) = 1 * p ^ (t - 1) := by simp
+      _ ≤ m * p ^ (t - 1) := by
+        exact Nat.mul_le_mul_right _ hm1
+  have hcarry : CarryAt p N k t := by
+    by_contra hnocarry
+    have hprefix :=
+      (not_carryAt_iff_mod_pow_le
+        (p := p) (n := N) (k := k) (i := t) hp0 hkn).1 hnocarry
+    rw [Nat.mod_eq_of_lt hkltpow] at hprefix
+    exact (Nat.not_le_of_gt (hNmodlt.trans_le hpowpred_le_k)) hprefix
+  have hfilter :
+      ((Finset.Ico 1 (t + 1)).filter fun i ↦ CarryAt p N k i) = {t} := by
+    ext j
+    simp only [Finset.mem_filter, Finset.mem_Ico, Finset.mem_singleton]
+    constructor
+    · rintro ⟨⟨hj1, hjlt⟩, hjcarry⟩
+      have hjle : j ≤ t := Nat.lt_succ_iff.mp hjlt
+      by_cases hjt : j = t
+      · exact hjt
+      · have hjlt' : j < t := by omega
+        exact (hnocarry_of_lt hjlt' hjcarry).elim
+    · intro hj
+      subst j
+      exact ⟨⟨ht1, Nat.lt_succ_self t⟩, hcarry⟩
+  have hcount : carryCount p N k (t + 1) = 1 := by
+    rw [carryCount, hfilter]
+    simp
+  have hval : padicValNat p (N.choose k) = 1 := by
+    rw [padicVal_choose_eq_carryCount hkn (Nat.lt_succ_self t), hcount]
+  exact ⟨k, ⟨hkpos, hkN, hmk⟩, hval⟩
 
-/-- TODO(MinusOne-4): repaired `p = m-1` uniform witness, avoiding the defective `m p^(t-1)` choice. -/
+/-- In the edge case `p = m-1`, the repaired witness uses the leading occupied
+digit `t` and a lower occupied digit `s` of the same parity:
+`k = p^(t-1) + p^s`. -/
 theorem uniform_case_one_borrow_edge
     {m p N : ℕ} (hm : 3 ≤ m) (hp : p.Prime) (hpm : p = m - 1)
     (hmN : m ∣ N) (hNm : m < N)
@@ -439,7 +614,288 @@ theorem uniform_case_one_borrow_edge
       s < t ∧ Occupied p N t ∧ Occupied p N s ∧
       k = p ^ (t - 1) + p ^ s ∧
       Admissible N m k ∧ padicValNat p (N.choose k) = 1 := by
-  sorry
+  letI : Fact p.Prime := ⟨hp⟩
+  have hm2 : 2 ≤ m := by omega
+  have hp0 : 0 < p := hp.pos
+  have hp1 : 1 < p := hp.one_lt
+  have hp2 : 2 ≤ p := hp.two_le
+  have hpmod : p % m = m - 1 := by
+    rw [hpm, Nat.mod_eq_of_lt (by omega : m - 1 < m)]
+  have hNpos : 0 < N := by omega
+  have hNne : N ≠ 0 := Nat.ne_of_gt hNpos
+  let t := Nat.log p N
+  let L := Nat.digits p N
+  have hpowle : p ^ t ≤ N := by
+    dsimp [t]
+    exact Nat.pow_log_le_self p hNne
+  have hNlt : N < p ^ (t + 1) := by
+    dsimp [t]
+    simpa [Nat.succ_eq_add_one] using Nat.lt_pow_succ_log_self hp1 N
+  have hqone : 1 ≤ N / p ^ t := by
+    rw [Nat.le_div_iff_mul_le (pow_pos hp0 t)]
+    simpa using hpowle
+  have hqpos : 0 < N / p ^ t := by omega
+  have hqlt : N / p ^ t < p := by
+    rw [Nat.div_lt_iff_lt_mul (pow_pos hp0 t)]
+    simpa [pow_succ, Nat.mul_comm] using hNlt
+  have htocc : Occupied p N t := by
+    dsimp [Occupied, digitAt]
+    rw [Nat.mod_eq_of_lt hqlt]
+    exact hqpos
+  have hLlen : L.length = t + 1 := by
+    dsimp [L, t]
+    exact Nat.length_digits p N hp1 hNne
+  have htlen : t < L.length := by omega
+  have hLsum : L.sum = m := by
+    have hsum :
+        evenDigitSum p N + oddDigitSum p N = L.sum := by
+      simpa [L, evenDigitSum, oddDigitSum] using
+        parityDigitSums_add_eq_sum L
+    rcases huniform with h | h <;> omega
+  have hgettop : L.getD t 0 = digitAt p N t := by
+    dsimp [L]
+    rw [Nat.getD_digits N t hp2]
+    rfl
+  have hdrop : L.drop t = [L.getD t 0] := by
+    rw [List.drop_eq_getElem_cons htlen,
+      ← List.getD_eq_getElem L 0 htlen,
+      ← hLlen, List.drop_length]
+  have hdecomp : (L.take t).sum + digitAt p N t = m := by
+    have h := List.sum_take_add_sum_drop L t
+    rw [hdrop, List.sum_singleton, hgettop, hLsum] at h
+    exact h
+  have htoplt : digitAt p N t < p := by
+    simpa [digitAt] using Nat.mod_lt (N / p ^ t) hp0
+  have hprefpos : 0 < (L.take t).sum := by
+    omega
+  obtain ⟨s, hsTake, hsposTake⟩ :=
+    List.exists_mem_iff_getElem.mp
+      (List.sum_pos_iff_exists_pos_nat.mp hprefpos)
+  have htakeLen : (L.take t).length = t := by
+    exact List.length_take_of_le htlen.le
+  have hst : s < t := by
+    rw [htakeLen] at hsTake
+    exact hsTake
+  have hslen : s < L.length := hst.trans htlen
+  have hsposL : 0 < L[s] := by
+    simpa only [List.getElem_take] using hsposTake
+  have hsgetpos : 0 < L.getD s 0 := by
+    rw [List.getD_eq_getElem L 0 hslen]
+    exact hsposL
+  have hsocc : Occupied p N s := by
+    dsimp [Occupied]
+    dsimp [L] at hsgetpos
+    rw [Nat.getD_digits N s hp2] at hsgetpos
+    exact hsgetpos
+  have ht1 : 1 ≤ t := by omega
+  have hsame : Even s ↔ Even t := by
+    rcases huniform with hevenUniform | hoddUniform
+    · rcases hevenUniform with ⟨heven, hodd⟩
+      have htEven : Even t := by
+        by_contra htNotEven
+        have hbound :=
+          digitAt_le_parityDigitSum (p := p) (N := N) (i := t) hp2
+        rw [if_neg htNotEven, hodd] at hbound
+        have htpos : 0 < digitAt p N t := htocc
+        omega
+      have hsEven : Even s := by
+        by_contra hsNotEven
+        have hbound :=
+          digitAt_le_parityDigitSum (p := p) (N := N) (i := s) hp2
+        rw [if_neg hsNotEven, hodd] at hbound
+        have hspos : 0 < digitAt p N s := hsocc
+        omega
+      exact ⟨fun _ ↦ htEven, fun _ ↦ hsEven⟩
+    · rcases hoddUniform with ⟨heven, hodd⟩
+      have htNotEven : ¬ Even t := by
+        intro htEven
+        have hbound :=
+          digitAt_le_parityDigitSum (p := p) (N := N) (i := t) hp2
+        rw [if_pos htEven, heven] at hbound
+        have htpos : 0 < digitAt p N t := htocc
+        omega
+      have hsNotEven : ¬ Even s := by
+        intro hsEven
+        have hbound :=
+          digitAt_le_parityDigitSum (p := p) (N := N) (i := s) hp2
+        rw [if_pos hsEven, heven] at hbound
+        have hspos : 0 < digitAt p N s := hsocc
+        omega
+      constructor
+      · intro hsEven
+        exact (hsNotEven hsEven).elim
+      · intro htEven
+        exact (htNotEven htEven).elim
+  have hs_succ_lt : s + 1 < t := by
+    have hsle : s + 1 ≤ t := by omega
+    by_contra hnot
+    have heq : s + 1 = t := by omega
+    have hflip : Even t ↔ ¬ Even s := by
+      rw [← heq]
+      exact Nat.even_add_one
+    by_cases hsEven : Even s
+    · exact (hflip.mp (hsame.mp hsEven)) hsEven
+    · exact hsEven (hsame.mpr (hflip.mpr hsEven))
+  have hsltpred : s < t - 1 := by omega
+  have hpredzero : digitAt p N (t - 1) = 0 := by
+    rcases huniform with hevenUniform | hoddUniform
+    · rcases hevenUniform with ⟨heven, hodd⟩
+      have htEven : Even t := by
+        by_contra htNotEven
+        have hbound :=
+          digitAt_le_parityDigitSum (p := p) (N := N) (i := t) hp2
+        rw [if_neg htNotEven, hodd] at hbound
+        have htpos : 0 < digitAt p N t := htocc
+        omega
+      have hpredNotEven : ¬ Even (t - 1) := by
+        have h := htEven
+        rw [← Nat.sub_add_cancel ht1, Nat.even_add_one] at h
+        exact h
+      have hbound :=
+        digitAt_le_parityDigitSum (p := p) (N := N) (i := t - 1) hp2
+      rw [if_neg hpredNotEven, hodd] at hbound
+      omega
+    · rcases hoddUniform with ⟨heven, hodd⟩
+      have htNotEven : ¬ Even t := by
+        intro htEven
+        have hbound :=
+          digitAt_le_parityDigitSum (p := p) (N := N) (i := t) hp2
+        rw [if_pos htEven, heven] at hbound
+        have htpos : 0 < digitAt p N t := htocc
+        omega
+      have hpredEven : Even (t - 1) := by
+        by_contra hpredNotEven
+        apply htNotEven
+        rw [← Nat.sub_add_cancel ht1, Nat.even_add_one]
+        exact hpredNotEven
+      have hbound :=
+        digitAt_le_parityDigitSum (p := p) (N := N) (i := t - 1) hp2
+      rw [if_pos hpredEven, heven] at hbound
+      omega
+  have hNmod : N % p ^ t = N % p ^ (t - 1) := by
+    have h := mod_pow_succ_eq_mod_add_digitAt p N (t - 1)
+    rw [Nat.sub_add_cancel ht1] at h
+    simpa [hpredzero] using h
+  have hNmodlt : N % p ^ t < p ^ (t - 1) := by
+    rw [hNmod]
+    exact Nat.mod_lt _ (pow_pos hp0 _)
+  have hpow_s_lt_pred : p ^ s < p ^ (t - 1) := by
+    exact Nat.pow_lt_pow_right hp1 hsltpred
+  let k := p ^ (t - 1) + p ^ s
+  have hkpos : 0 < k := by
+    dsimp [k]
+    positivity
+  have hkltpow : k < p ^ t := by
+    have hlt2 : p ^ (t - 1) + p ^ s < 2 * p ^ (t - 1) := by
+      omega
+    have h2p : 2 * p ^ (t - 1) ≤ p * p ^ (t - 1) := by
+      exact Nat.mul_le_mul_right _ hp2
+    dsimp [k]
+    calc
+      p ^ (t - 1) + p ^ s < 2 * p ^ (t - 1) := hlt2
+      _ ≤ p * p ^ (t - 1) := h2p
+      _ = p ^ (t - 1) * p := Nat.mul_comm _ _
+      _ = p ^ ((t - 1) + 1) := (pow_succ p (t - 1)).symm
+      _ = p ^ t := by rw [Nat.sub_add_cancel ht1]
+  have hkN : k < N := hkltpow.trans_le hpowle
+  have hkn : k ≤ N := hkN.le
+  have hmk : m ∣ k := by
+    rw [Nat.dvd_iff_mod_eq_zero]
+    dsimp [k]
+    rw [Nat.add_mod,
+      pow_mod_eq_parity_sign hm2 hpmod,
+      pow_mod_eq_parity_sign hm2 hpmod]
+    by_cases htEven : Even t
+    · have hsEven : Even s := hsame.mpr htEven
+      have hpredNotEven : ¬ Even (t - 1) := by
+        have h := htEven
+        rw [← Nat.sub_add_cancel ht1, Nat.even_add_one] at h
+        exact h
+      simp [hpredNotEven, hsEven, Nat.sub_add_cancel (by omega : 1 ≤ m)]
+    · have hsNotEven : ¬ Even s := by
+        intro hsEven
+        exact htEven (hsame.mp hsEven)
+      have hpredEven : Even (t - 1) := by
+        by_contra hpredNotEven
+        apply htEven
+        rw [← Nat.sub_add_cancel ht1, Nat.even_add_one]
+        exact hpredNotEven
+      rw [if_pos hpredEven, if_neg hsNotEven]
+      rw [Nat.add_comm, Nat.sub_add_cancel (by omega : 1 ≤ m), Nat.mod_self]
+  have hsmodbase : p ^ s ≤ N % p ^ (s + 1) := by
+    rw [mod_pow_succ_eq_mod_add_digitAt]
+    have hspos : 0 < digitAt p N s := hsocc
+    have hdigit : 1 ≤ digitAt p N s := by omega
+    have hmul : p ^ s ≤ p ^ s * digitAt p N s := by
+      calc
+        p ^ s = p ^ s * 1 := by simp
+        _ ≤ p ^ s * digitAt p N s := Nat.mul_le_mul_left _ hdigit
+    exact hmul.trans (Nat.le_add_left _ _)
+  have hsmodle {j : ℕ} (hsj : s < j) : p ^ s ≤ N % p ^ j := by
+    have hs1j : s + 1 ≤ j := by omega
+    have hdvd : p ^ (s + 1) ∣ p ^ j := Nat.pow_dvd_pow p hs1j
+    have hrem :
+        N % p ^ (s + 1) ≤ N % p ^ j := by
+      calc
+        N % p ^ (s + 1) = (N % p ^ j) % p ^ (s + 1) :=
+          (Nat.mod_mod_of_dvd N hdvd).symm
+        _ ≤ N % p ^ j := Nat.mod_le _ _
+    exact hsmodbase.trans hrem
+  have hnocarry_of_lt {j : ℕ} (hjt : j < t) : ¬ CarryAt p N k j := by
+    apply
+      (not_carryAt_iff_mod_pow_le
+        (p := p) (n := N) (k := k) (i := j) hp0 hkn).2
+    by_cases hjs : j ≤ s
+    · have hjpred : j ≤ t - 1 := by omega
+      have hdvdk : p ^ j ∣ k := by
+        dsimp [k]
+        exact dvd_add
+          (Nat.pow_dvd_pow p hjpred)
+          (Nat.pow_dvd_pow p hjs)
+      rw [Nat.mod_eq_zero_of_dvd hdvdk]
+      exact Nat.zero_le _
+    · have hsj : s < j := by omega
+      have hjpred : j ≤ t - 1 := by omega
+      have hdvdtop : p ^ j ∣ p ^ (t - 1) :=
+        Nat.pow_dvd_pow p hjpred
+      have hpslt : p ^ s < p ^ j :=
+        Nat.pow_lt_pow_right hp1 hsj
+      have hkmod : k % p ^ j = p ^ s := by
+        dsimp [k]
+        rw [Nat.add_mod, Nat.mod_eq_zero_of_dvd hdvdtop]
+        simp [Nat.mod_eq_of_lt hpslt]
+      rw [hkmod]
+      exact hsmodle hsj
+  have hpowpred_le_k : p ^ (t - 1) ≤ k := by
+    dsimp [k]
+    exact Nat.le_add_right _ _
+  have hcarry : CarryAt p N k t := by
+    by_contra hnocarry
+    have hprefix :=
+      (not_carryAt_iff_mod_pow_le
+        (p := p) (n := N) (k := k) (i := t) hp0 hkn).1 hnocarry
+    rw [Nat.mod_eq_of_lt hkltpow] at hprefix
+    exact (Nat.not_le_of_gt (hNmodlt.trans_le hpowpred_le_k)) hprefix
+  have hfilter :
+      ((Finset.Ico 1 (t + 1)).filter fun i ↦ CarryAt p N k i) = {t} := by
+    ext j
+    simp only [Finset.mem_filter, Finset.mem_Ico, Finset.mem_singleton]
+    constructor
+    · rintro ⟨⟨hj1, hjlt⟩, hjcarry⟩
+      have hjle : j ≤ t := Nat.lt_succ_iff.mp hjlt
+      by_cases hjt : j = t
+      · exact hjt
+      · have hjlt' : j < t := by omega
+        exact (hnocarry_of_lt hjlt' hjcarry).elim
+    · intro hj
+      subst j
+      exact ⟨⟨ht1, Nat.lt_succ_self t⟩, hcarry⟩
+  have hcount : carryCount p N k (t + 1) = 1 := by
+    rw [carryCount, hfilter]
+    simp
+  have hval : padicValNat p (N.choose k) = 1 := by
+    rw [padicVal_choose_eq_carryCount hkn (Nat.lt_succ_self t), hcount]
+  exact ⟨t, s, k, hst, htocc, hsocc, rfl, ⟨hkpos, hkN, hmk⟩, hval⟩
 
 /-- TODO(MinusOne-5): mixed case has a one-borrow witness when `p > m`. -/
 theorem mixed_case_one_borrow_of_gt

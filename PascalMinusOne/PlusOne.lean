@@ -60,7 +60,7 @@ private lemma ofDigits_pos_of_sum_pos
       · have hd0 : d = 0 := Nat.eq_zero_of_not_pos hd
         subst d
         have hL' : 0 < D.sum := by simpa using hL
-        exact Nat.mul_pos hp (ih hL')
+        simpa using Nat.mul_pos hp (ih hL')
 
 /-- A positive natural has positive base-`p` digit sum. -/
 private lemma digitSum_pos_of_pos

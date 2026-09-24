@@ -90,7 +90,9 @@ theorem minimal_signed_zero_sum_classification {m A B : ℕ} (hm : 3 ≤ m) :
       · have hdiv : m ∣ 1 := (signedZeroSum_zero_left_iff m 1).1 hzero
         have hm1 : m = 1 := Nat.dvd_one.mp hdiv
         omega
-    · rcases hm0 with ⟨rfl, rfl⟩
+    · rcases hm0 with ⟨hA, hB⟩
+      subst A
+      subst B
       refine ⟨by omega, signedZeroSum_m_zero m, ?_⟩
       rintro ⟨a, b, ha, hb, hpos, hproper, hzero⟩
       have hb0 : b = 0 := by omega
@@ -99,7 +101,9 @@ theorem minimal_signed_zero_sum_classification {m A B : ℕ} (hm : 3 ≤ m) :
       have hdiv : m ∣ a := (signedZeroSum_right_zero_iff m a).1 hzero
       have hma : m ≤ a := Nat.le_of_dvd hapos hdiv
       omega
-    · rcases h0m with ⟨rfl, rfl⟩
+    · rcases h0m with ⟨hA, hB⟩
+      subst A
+      subst B
       refine ⟨by omega, signedZeroSum_zero_m m, ?_⟩
       rintro ⟨a, b, ha, hb, hpos, hproper, hzero⟩
       have ha0 : a = 0 := by omega

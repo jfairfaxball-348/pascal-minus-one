@@ -2,6 +2,7 @@ import PascalMinusOne.Basic
 import PascalMinusOne.Digits
 import PascalMinusOne.Kummer
 import PascalMinusOne.SignedTokens
+import Mathlib.Data.Nat.Digits.Div
 
 namespace PascalMinusOne
 
@@ -47,6 +48,36 @@ theorem pow_mod_eq_parity_sign {m p i : ℕ} (hm : 2 ≤ m) (hpm : p % m = m - 1
         _ ≡ 1 ^ j * (m - 1) [MOD m] := (hsq.pow j).mul Nat.ModEq.rfl
         _ = m - 1 := by simp
     simpa [Nat.ModEq, Nat.mod_eq_of_lt (by omega : m - 1 < m)] using hpow
+
+/-- Evaluating a little-endian digit list at base `-1` gives its even-position sum minus
+its odd-position sum. -/
+lemma ofDigits_neg_one_eq_parityDigitSums (L : List ℕ) :
+    Nat.ofDigits (-1 : ℤ) L =
+      ((parityDigitSums L).1 : ℤ) - ((parityDigitSums L).2 : ℤ) := by
+  induction L with
+  | nil => simp [Nat.ofDigits, parityDigitSums]
+  | cons d ds ih =>
+      simp [Nat.ofDigits, parityDigitSums, ih]
+      ring
+
+/-- Divisibility by `m` is the signed zero-sum condition on the even/odd base-`p`
+digit totals when `p ≡ -1 (mod m)`. -/
+lemma dvd_iff_signedZeroSum_digitSums {m p k : ℕ}
+    (hm : 2 ≤ m) (hpm : p % m = m - 1) :
+    m ∣ k ↔ SignedZeroSum m (evenDigitSum p k) (oddDigitSum p k) := by
+  have hpmod : p ≡ m - 1 [MOD m] := by
+    rw [Nat.ModEq, Nat.mod_eq_of_lt (by omega : m - 1 < m)]
+    exact hpm
+  have hmp1 : m ∣ p + 1 := by
+    rw [← Nat.modEq_zero_iff_dvd]
+    have h := hpmod.add_right 1
+    simpa [Nat.ModEq, Nat.sub_add_cancel (by omega : 1 ≤ m)] using h
+  have hdiv : (m : ℤ) ∣ (p : ℤ) - (-1 : ℤ) := by
+    rw [sub_neg_eq_add]
+    exact_mod_cast hmp1
+  simpa [SignedZeroSum, evenDigitSum, oddDigitSum,
+    ofDigits_neg_one_eq_parityDigitSums] using
+    (Nat.dvd_iff_dvd_ofDigits m p (-1 : ℤ) hdiv k)
 
 /-- TODO(MinusOne-2): no-borrow admissible indices are proper zero-sum signed submultisets. -/
 theorem noBorrow_iff_proper_signed_zero_sum

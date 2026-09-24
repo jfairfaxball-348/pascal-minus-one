@@ -333,7 +333,7 @@ theorem noBorrow_iff_proper_signed_zero_sum
       simpa [evenDigitSum, oddDigitSum, parityDigitSums_add_eq_sum] using hsumpos
     · have hSval : Nat.ofDigits p S = k := by
         dsimp [S]
-        simp [Nat.digitsAppend]
+        rw [Nat.digitsAppend, Nat.ofDigits_append_replicate_zero, Nat.ofDigits_digits]
       have hSne : S ≠ Nat.digits p N := by
         intro hEq
         have hkEqN : k = N := by
@@ -357,7 +357,7 @@ theorem noBorrow_iff_proper_signed_zero_sum
     obtain ⟨S, hSD, hpar⟩ :=
       exists_subdigits_with_parityDigitSums (Nat.digits p N) haD hbD
     have hD : ∀ d ∈ Nat.digits p N, d < p :=
-      fun d hd => Nat.digits_lt_base hp1 hd
+      fun d hd => Nat.digits_lt_base hp.one_lt hd
     have hS : ∀ s ∈ S, s < p :=
       all_lt_of_forall₂_le hSD hD
     let k := Nat.ofDigits p S

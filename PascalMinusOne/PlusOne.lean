@@ -91,7 +91,7 @@ private lemma exists_append_two_of_two_le_length
           refine ⟨P.reverse, a, d, ?_⟩
           dsimp [R] at hEq
           have hrev := congrArg List.reverse hEq
-          simpa using hrev
+          simpa [hTEq, List.append_assoc] using hrev
 
 /-- If the base-`p` digit sum is strictly larger than `m`, a proper
 digitwise subnumber of digit sum exactly `m` gives a zero-valuation witness. -/

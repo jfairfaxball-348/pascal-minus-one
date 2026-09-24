@@ -1201,9 +1201,10 @@ lemma mixed_eq_sum_two_powers
   have hNlt : N < p ^ (t + 1) := by
     dsimp [t]
     simpa [Nat.succ_eq_add_one] using Nat.lt_pow_succ_log_self hp1 N
-  have hqpos : 0 < N / p ^ t := by
-    rw [Nat.div_pos_iff_lt_mul]
-    exact ⟨pow_pos hp0 t, by simpa using hpowle⟩
+  have hqone : 1 ≤ N / p ^ t := by
+    rw [Nat.le_div_iff_mul_le (pow_pos hp0 t)]
+    simpa using hpowle
+  have hqpos : 0 < N / p ^ t := by omega
   have hqlt : N / p ^ t < p := by
     rw [Nat.div_lt_iff_lt_mul (pow_pos hp0 t)]
     simpa [pow_succ, Nat.mul_comm] using hNlt

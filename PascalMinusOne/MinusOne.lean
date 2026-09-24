@@ -820,7 +820,8 @@ theorem uniform_case_one_borrow_edge
         apply htEven
         rw [← Nat.sub_add_cancel ht1, Nat.even_add_one]
         exact hpredNotEven
-      simp [hpredEven, hsNotEven, Nat.sub_add_cancel (by omega : 1 ≤ m)]
+      rw [if_pos hpredEven, if_neg hsNotEven]
+      rw [Nat.add_comm, Nat.sub_add_cancel (by omega : 1 ≤ m), Nat.mod_self]
   have hsmodbase : p ^ s ≤ N % p ^ (s + 1) := by
     rw [mod_pow_succ_eq_mod_add_digitAt]
     have hspos : 0 < digitAt p N s := hsocc
@@ -829,7 +830,7 @@ theorem uniform_case_one_borrow_edge
       calc
         p ^ s = p ^ s * 1 := by simp
         _ ≤ p ^ s * digitAt p N s := Nat.mul_le_mul_left _ hdigit
-    omega
+    exact hmul.trans (Nat.le_add_left _ _)
   have hsmodle {j : ℕ} (hsj : s < j) : p ^ s ≤ N % p ^ j := by
     have hs1j : s + 1 ≤ j := by omega
     have hdvd : p ^ (s + 1) ∣ p ^ j := Nat.pow_dvd_pow p hs1j
@@ -861,9 +862,8 @@ theorem uniform_case_one_borrow_edge
         Nat.pow_lt_pow_right hp1 hsj
       have hkmod : k % p ^ j = p ^ s := by
         dsimp [k]
-        rw [Nat.add_mod, Nat.mod_eq_zero_of_dvd hdvdtop,
-          Nat.mod_eq_of_lt hpslt]
-        simp
+        rw [Nat.add_mod, Nat.mod_eq_zero_of_dvd hdvdtop]
+        simp [Nat.mod_eq_of_lt hpslt]
       rw [hkmod]
       exact hsmodle hsj
   have hpowpred_le_k : p ^ (t - 1) ≤ k := by

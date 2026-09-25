@@ -12,9 +12,9 @@ submission or registration.
 - Lean toolchain: `leanprover/lean4:v4.35.0-rc2`
 - Mathlib: `bd6c1abe5f55b6c3856172d6a23703e0888f5286`
 - formalization.yaml schema: `v0.4`
-- predictive execution profile: `palomar-standard-v1` (required by the live llms.txt contract for reusable workflow calls from the submitting repository)
+- predictive execution profile: `palomar-standard-v1`\n- predictive caller mode: single `mode: full` reusable-workflow call, matching the pinned PalomarSubmission README example
 
-The submission protocol was also checked against
+A preparation-only predictive attempt reached Palomar but returned the Palomar-owned diagnostic `palomar.reporting_failed` (`retryable: true`, `repairable: false`, `next_action: No repository change is indicated`). The final caller therefore follows the pinned PalomarSubmission README's documented single `mode: full` predictive pattern; full mode repeats the same intake preparation before continuing to the expensive verifier.\n\nThe submission protocol was also checked against
 `https://submit.palomar-registry.org/llms.txt` on 25 September 2026. The
 reusable workflow reference and `pipeline_commit` are pinned to the same full
 PalomarSubmission SHA. The predictive workflow runs preparation first and only

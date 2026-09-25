@@ -2,9 +2,9 @@
 
 Lean/Mathlib formalisation of the restricted binomial gcd
 
-\[
-G(N;m)=\gcd\left\{\binom Nk:0<k<N,\ m\mid k\right\}.
-\]
+[
+G(N;m)=gcdleft{inom Nk:0<k<N, mmid kight}.
+]
 
 The repository now formalises the `p ≡ -1 (mod m)` valuation theorem, the complementary
 `p ≡ 1 (mod m)` branch needed by the project, the trailing-zero scaling reduction, and
@@ -35,13 +35,13 @@ The Lean theorem is `PascalMinusOne.minus_one_valuation`.
 Assume `0 < m`, `m ∣ N`, `m < N`, `p` prime, and
 `p % m = 1 % m`. Then
 
-\[
+[
 v_p(G(N;m))=
-\begin{cases}
-1,&\text{if the base-}p\text{ digit sum of }N\text{ is }m,\\
-0,&\text{otherwise.}
-\end{cases}
-\]
+egin{cases}
+1,&	ext{if the base-}p	ext{ digit sum of }N	ext{ is }m,\
+0,&	ext{otherwise.}
+end{cases}
+]
 
 The formulation deliberately includes `m = 1` and `m = 2`, because those reduced
 moduli occur after scaling in the small-modulus corollaries. The Lean theorem is
@@ -51,9 +51,9 @@ moduli occur after scaling in the small-modulus corollaries. The Lean theorem is
 
 For prime `p` and natural numbers `c,q,N'`,
 
-\[
-v_p\!\left(G(p^cN';p^cq)\right)=v_p\!\left(G(N';q)\right).
-\]
+[
+v_p!left(G(p^cN';p^cq)ight)=v_p!left(G(N';q)ight).
+]
 
 This is `PascalMinusOne.scaling_valuation`.
 
@@ -99,7 +99,9 @@ evidence only; they are not used as substitutes for the infinite Lean proofs.
 - `PascalMinusOne/SmallModuli.lean`: complete `m=3,4,6` prime-by-prime corollaries.
 - `scripts/reference_check.py`: independent finite regression checker.
 - `tests/test_reference_checker.py`: Python regression tests.
-- `notes/`: proof architecture, literature boundary, and discovery provenance.
+- `notes/proof-outline.md`: proof architecture.
+- `notes/literature.md`: concise literature boundary.
+- `notes/novelty-audit-2026-09.md`: September 2026 source-level novelty audit.
 
 ## Build and test
 
@@ -122,10 +124,28 @@ base-`p` digit and digit-sum lemmas.
 
 ## Literature and novelty
 
-See `notes/literature.md`. The plus-one direction has known prior art and is formalised
-here as part of the complete theorem layer. Lean completeness does **not** establish
-novelty of the minus-one result. This repository makes no publication-level novelty
-claim without a separate source-level literature audit.
+A source-level audit through **September 2026** located **no equivalent prior theorem
+for the full `p ≡ -1 (mod m)` valuation formula**.
+
+The closest prior art is Carl McTague's 2017 theorem for the same restricted gcd family.
+McTague's `p ≡ 1 (mod m)` result mathematically covers the plus-one branch, and his
+same-residue weakening also covers the minus-one one-parity cases
+`(A,B)=(m,0)` and `(0,m)` when `p>m`. McTague additionally records the concrete
+`m=3, p=2, N=6` valuation-2 example.
+
+The audit did **not** locate a prior theorem giving the full mixed-parity minus-one
+classification or the general `p=m-1` classification formalised here. The repository
+therefore describes the minus-one result as **appearing to extend known results** and
+does not make an unconditional "first" or priority claim.
+
+No prior proof-assistant formalisation of this arithmetic-progression restricted
+binomial-gcd valuation family was located, although Mathlib already formalises Kummer's
+theorem and classical full-row binomial gcds, and other binomial-gcd problems have been
+formalised in Lean.
+
+See [`notes/literature.md`](notes/literature.md) for the concise boundary and
+[`notes/novelty-audit-2026-09.md`](notes/novelty-audit-2026-09.md) for the full
+source-level comparison and bibliography.
 
 ## License
 

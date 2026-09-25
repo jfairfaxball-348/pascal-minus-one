@@ -5,6 +5,5 @@ This directory contains the arXiv-ready paper source for the Pascal Minus-One GC
 - `main.tex`: single-file LaTeX source for the paper.
 - `PREFLIGHT.md`: arXiv technical and policy pre-flight record.
 - `LEAN_ALIGNMENT.md`: theorem-to-Lean statement alignment note.
-- `arxiv/main.tex`: self-contained arXiv upload source.
 
-The compiled PDF and upload zip are generated artifacts and are not required for the Lean theorem layer. The project has not been submitted to arXiv in this repository state.
+The clean arXiv upload zip is generated from `main.tex` and is intentionally not committed as repository source. The compiled PDF and upload zip are generated artifacts and are not required for the Lean theorem layer. The project has not been submitted to arXiv in this repository state.

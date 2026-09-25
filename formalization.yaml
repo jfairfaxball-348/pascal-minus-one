@@ -33,7 +33,7 @@ sources:
       minus-one theorem is presented and proved. Palomar's original-proof marker
       is used here only to record result origin for provenance; it is not an
       unconditional historical priority claim. The adopted public novelty
-      wording is: «A source-level literature audit through September 2026 located no equivalent prior theorem for the full "p ≡ -1 (mod m)" valuation formula. McTague's 2017 theorem and its same-residue weakening cover the "p ≡ 1 (mod m)" branch and part of the minus-one "p>m" regime, but not the mixed-parity branch or the general "p=m-1" classification proved here.»
+      wording is: «A source-level literature audit through 25 September 2026 located no equivalent prior theorem for the full "p ≡ -1 (mod m)" valuation formula. McTague's Theorem Q gives the "p ≡ 1 (mod m)" branch, and the corrected arXiv v5 same-residue remark gives the one-parity minus-one branches for "p>m". No equivalent prior theorem was located for the mixed-parity branch or for the general "p=m-1" regime. This is a negative-search statement, not an unconditional historical-priority claim.»
   - title: "On the Greatest Common Divisor of Binomial Coefficients C(n,q), C(n,2q), C(n,3q), ..."
     authors:
       - "Carl McTague"
@@ -43,10 +43,11 @@ sources:
     relationship: "background"
     note: >-
       Studies the same restricted gcd family. Its p ≡ 1 (mod m) theorem covers
-      the repository's plus-one branch, and its same-residue weakening covers
-      the same-parity minus-one branches for p>m. It also records the
-      m=3, p=2, N=6 valuation-2 example, but not the full minus-one
-      classification submitted here.
+      the repository's plus-one branch. Its corrected arXiv v5 same-residue
+      remark covers the one-parity minus-one branches for p>m, but explicitly
+      requires p>m and therefore does not cover any p=m-1 case. It also records
+      the m=3, p=2, N=6 valuation-2 example, but not the full mixed-parity or
+      general p=m-1 classification submitted here.
   - title: "Computing the Greatest Common Divisor of Binomial Coefficients C(mn,mk)"
     authors:
       - "Chai Wah Wu"
@@ -59,7 +60,16 @@ sources:
       centered on primes congruent to 1 modulo m; it does not supply the general
       minus-one theorem submitted here.
 
-related_formalizations: []
+related_formalizations:
+  - id: "https://github.com/MechMath/binomial-gcd"
+    relationship: "independent"
+    note: >-
+      Guo, Qiu, Cao, Feng and Gao's 2026 Lean 4 formalisation proves the OEIS
+      A080170 criterion for D(k) = gcd_{2 <= q <= k+1} C(qk,k), where the lower
+      index is fixed and the upper row varies. It is related binomial-gcd
+      mathematics but is not a formalisation of McTague's fixed-row
+      arithmetic-progression family or of this project's minus-one theorem;
+      no code or theorem dependency is shared.
 
 status:
   scope: >-
@@ -128,8 +138,8 @@ review:
   notes: >-
     The theorem layer is Lean-complete and has been subjected to repeated build,
     regression, finite reference-sweep, zero-sorry/admit/replacement-axiom, and
-    statement-alignment checks. A source-level literature audit through
-    September 2026 is recorded in notes/literature.md and
+    statement-alignment checks. The final pre-paper source-level literature
+    audit through 25 September 2026 is recorded in notes/literature.md and
     notes/novelty-audit-2026-09.md. Palomar registration is complete as
     PALOMAR-2026-09-25-000017, version 1. No independent human peer review is
     claimed; the registry record is distinct from this self-assessment and from
@@ -139,9 +149,11 @@ review:
     as_of: "2026-09-25"
     conclusion: >-
       No equivalent prior theorem for the full p ≡ -1 (mod m) valuation formula
-      was located. McTague covers the plus-one branch, the same-parity
-      minus-one branches for p>m, and one valuation-2 example; no prior full
-      mixed-parity or general p=m-1 classification was located.
+      was located. McTague's Theorem Q covers the plus-one branch; the corrected
+      arXiv v5 same-residue remark covers the one-parity minus-one branches only
+      for p>m and records one p=m-1 valuation-2 example. No equivalent prior
+      theorem was located for the mixed-parity branch or the general p=m-1
+      regime, including the one-parity low-prime cases.
     limitations: >-
       A negative literature search cannot rule out unpublished, private, or
       unindexed earlier work and is not an unconditional priority claim.
@@ -162,6 +174,8 @@ alignment:
 
 acknowledgements: >-
   Carl McTague and Chai Wah Wu for the closest prior work on the restricted
-  binomial-gcd family; Mathlib for Kummer's theorem, p-adic valuation, digit,
-  and gcd infrastructure; and Lean, Comparator, and Palomar for the formal
-  verification and protected statement pipeline.
+  binomial-gcd family; Guo, Qiu, Cao, Feng and Gao for the nearby 2026 Lean
+  formalisation of a different binomial-gcd family; Mathlib for Kummer's
+  theorem, p-adic valuation, digit, and gcd infrastructure; and Lean,
+  Comparator, and Palomar for the formal verification and protected statement
+  pipeline.

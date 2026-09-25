@@ -147,6 +147,24 @@ See [`notes/literature.md`](notes/literature.md) for the concise boundary and
 [`notes/novelty-audit-2026-09.md`](notes/novelty-audit-2026-09.md) for the full
 source-level comparison and bibliography.
 
+## Palomar packaging
+
+The repository contains a Palomar package for the principal theorem
+`PascalMinusOne.minus_one_valuation`. The Mathlib-only `Challenge.lean`
+restates the restricted gcd, parity digit sums, expected valuation, and theorem
+inside `PascalMinusOnePalomar`; `Solution.lean` connects those declarations
+to the existing proof. `comparator.json` compares the theorem and every
+project-specific definition in its type.
+
+The predictive workflow is pinned to PalomarSubmission
+`a59f25bd8a66bf6faf3a4f4260d412989c0185ea`, runs preparation before the full mechanical verifier, and
+uses the documented single `mode: full` reusable-workflow pattern with the `palomar-standard-v1` execution profile. A green predictive
+run is packaging evidence only; it is not a Palomar submission, editorial
+review, acceptance, registration, or publication.
+
+See `notes/palomar-packaging-2026-09.md` for the immutable contract pins and
+scope.
+
 ## License
 
-No license has been selected yet. Add one deliberately before public distribution.
+This repository is licensed under the Apache License 2.0. See `LICENSE`.

@@ -1,0 +1,14 @@
+{
+  "challenge_module": "Challenge",
+  "solution_module": "Solution",
+  "theorem_names": ["PascalMinusOnePalomar.minus_one_valuation"],
+  "definition_names": [
+    "PascalMinusOnePalomar.G",
+    "PascalMinusOnePalomar.parityDigitSums",
+    "PascalMinusOnePalomar.evenDigitSum",
+    "PascalMinusOnePalomar.oddDigitSum",
+    "PascalMinusOnePalomar.minusOneExpectedValuation"
+  ],
+  "permitted_axioms": ["propext", "Quot.sound", "Classical.choice"],
+  "enable_nanoda": true
+}

@@ -1,0 +1,166 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/mathlib-initiative/formalization.yaml/main/schema/formalization.schema.json
+version: "v0.4"
+
+project:
+  name: "Pascal Minus-One GCD"
+  description: >-
+    A Lean 4 formalization of p-adic valuations for the restricted binomial gcd
+    G(N;m) = gcd{C(N,k) : 0 < k < N, m divides k}. The principal submitted
+    result gives the complete valuation formula for primes p congruent to -1
+    modulo m, including the mixed-parity digit-sum branch and the exceptional
+    p = m - 1 valuation-2 case. The repository also proves the complementary
+    p congruent to 1 branch, a prime-power scaling reduction, and complete
+    prime-by-prime formulas for m = 3, 4, and 6.
+  authors:
+    - name: "John Fairfax-Ball"
+      github: "jfairfaxball-348"
+  license: "Apache-2.0"
+  responsible_maintainers:
+    - "John Fairfax-Ball"
+
+classification:
+  arxiv: ["math.NT"]
+  msc2020: ["11B65"]
+
+sources:
+  - title: "Full p ≡ -1 (mod m) valuation classification for the restricted Pascal-row gcd"
+    authors:
+      - "John Fairfax-Ball"
+    type: "original-proof"
+    relationship: "other"
+    note: >-
+      This repository is the mathematical source in which the submitted full
+      minus-one theorem is presented and proved. Palomar's original-proof marker
+      is used here only to record result origin for provenance; it is not an
+      unconditional historical priority claim. The adopted public novelty
+      wording is: «A source-level literature audit through September 2026 located no equivalent prior theorem for the full "p ≡ -1 (mod m)" valuation formula. McTague's 2017 theorem and its same-residue weakening cover the "p ≡ 1 (mod m)" branch and part of the minus-one "p>m" regime, but not the mixed-parity branch or the general "p=m-1" classification proved here.»
+  - title: "On the Greatest Common Divisor of Binomial Coefficients C(n,q), C(n,2q), C(n,3q), ..."
+    authors:
+      - "Carl McTague"
+    id: "DOI:10.4169/amer.math.monthly.124.4.353"
+    type: "paper"
+    location: "https://arxiv.org/abs/1510.06696"
+    relationship: "background"
+    note: >-
+      Studies the same restricted gcd family. Its p ≡ 1 (mod m) theorem covers
+      the repository's plus-one branch, and its same-residue weakening covers
+      the same-parity minus-one branches for p>m. It also records the
+      m=3, p=2, N=6 valuation-2 example, but not the full minus-one
+      classification submitted here.
+  - title: "Computing the Greatest Common Divisor of Binomial Coefficients C(mn,mk)"
+    authors:
+      - "Chai Wah Wu"
+    id: "arXiv:2606.20940v2"
+    type: "paper"
+    location: "https://arxiv.org/abs/2606.20940"
+    relationship: "background"
+    note: >-
+      Studies the same gcd family under other hypotheses, including conditions
+      centered on primes congruent to 1 modulo m; it does not supply the general
+      minus-one theorem submitted here.
+
+related_formalizations: []
+
+status:
+  scope: >-
+    The repository fully proves PascalMinusOne.minus_one_valuation,
+    PascalMinusOne.plus_one_valuation, PascalMinusOne.scaling_valuation, and
+    the complete modulus-three, modulus-four, and modulus-six valuation
+    corollaries. The Palomar Comparator entry deliberately advertises only the
+    principal minus-one theorem. Its Challenge restates the restricted gcd,
+    the parity digit sums, and the piecewise expected valuation using
+    Mathlib-only definitions, and Comparator checks all of those definition
+    values together with the theorem. The deliberate Challenge sorry is not
+    part of the proof development count.
+  sorry_count: 0
+  sorry_in_definitions: 0
+  axioms: ["propext", "Quot.sound", "Classical.choice"]
+  main_results:
+    - "PascalMinusOne.minus_one_valuation"
+    - "PascalMinusOne.plus_one_valuation"
+    - "PascalMinusOne.scaling_valuation"
+    - "PascalMinusOne.modulus_three_valuation"
+    - "PascalMinusOne.modulus_four_valuation"
+    - "PascalMinusOne.modulus_six_valuation"
+
+automation:
+  methods:
+    - method: "agent"
+      models: ["OpenAI GPT-5.6 Sol"]
+      framework: "ChatGPT"
+      tool_setup: >-
+        Human-directed AI-assisted mathematical research, Lean development,
+        debugging, repository operations, literature auditing, and packaging,
+        using the GitHub connector, GitHub Actions, Lean tactics, and Python
+        regression/reference checks.
+      cost:
+        wall_time: "multiple interactive sessions on 24-25 September 2026"
+        spend_usd: "subscription-based; exact API-equivalent spend not tracked"
+        hardware: "GitHub-hosted Linux CI and ChatGPT-hosted tool execution"
+      prompting_notes: >-
+        Prompts enforced a proof-first workflow, exact theorem statements,
+        zero explicit sorry/admit/replacement-axiom declarations in the proof
+        development, regression checks, a source-level novelty audit, and
+        Palomar packaging without strengthening the audited novelty wording.
+  spend_usd: "subscription-based; exact API-equivalent spend not tracked"
+  notes: >-
+    The human maintainer selected the research target, theorem scope, validation
+    standards, novelty-claim level, and publication decisions. AI assistance was
+    used extensively for proof development, source comparison, repository work,
+    and packaging. Computational sweeps serve only as regression evidence and
+    are not substitutes for the Lean proofs.
+
+fidelity:
+  divergences: >-
+    No mathematical divergence is introduced between the advertised Challenge
+    theorem and PascalMinusOne.minus_one_valuation. The Challenge gives ordinary
+    Mathlib-only definitions of exactly the same restricted gcd, parity digit
+    sums, and piecewise expected valuation; the Solution bridges those
+    definitions to the existing theorem. The Palomar entry is intentionally
+    narrower than the repository's full public theorem layer because it selects
+    the principal minus-one contribution rather than bundling the plus-one,
+    scaling, and small-modulus corollaries into one reviewed result.
+
+review:
+  status: "self-assessed"
+  reviewers:
+    - "none"
+  notes: >-
+    The theorem layer is Lean-complete and has been subjected to repeated build,
+    regression, finite reference-sweep, zero-sorry/admit/replacement-axiom, and
+    statement-alignment checks. A source-level literature audit through
+    September 2026 is recorded in notes/literature.md and
+    notes/novelty-audit-2026-09.md. No independent human peer review is claimed;
+    Palomar's later editorial review is separate from this pre-submission
+    self-assessment.
+  prior_art:
+    status: "source-level audit completed"
+    as_of: "2026-09-25"
+    conclusion: >-
+      No equivalent prior theorem for the full p ≡ -1 (mod m) valuation formula
+      was located. McTague covers the plus-one branch, the same-parity
+      minus-one branches for p>m, and one valuation-2 example; no prior full
+      mixed-parity or general p=m-1 classification was located.
+    limitations: >-
+      A negative literature search cannot rule out unpublished, private, or
+      unindexed earlier work and is not an unconditional priority claim.
+    log: "notes/novelty-audit-2026-09.md"
+
+alignment:
+  namespace: "PascalMinusOnePalomar"
+  statements:
+    - source: "PascalMinusOne.minus_one_valuation in PascalMinusOne/MinusOne.lean"
+      lean: "PascalMinusOnePalomar.minus_one_valuation"
+      module: "Solution"
+      status: "proved"
+      note: >-
+        Exact Palomar-facing restatement of the project's principal theorem.
+        Comparator also checks every project-specific definition occurring in
+        its type, preventing the statement from drifting through an
+        unconstrained helper definition.
+
+acknowledgements: >-
+  Carl McTague and Chai Wah Wu for the closest prior work on the restricted
+  binomial-gcd family; Mathlib for Kummer's theorem, p-adic valuation, digit,
+  and gcd infrastructure; and Lean, Comparator, and Palomar for the formal
+  verification and protected statement pipeline.

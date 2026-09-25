@@ -1,0 +1,84 @@
+name: Palomar Package CI
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: palomar-package-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify-package:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          persist-credentials: false
+
+      - uses: leanprover/lean-action@38fbc41a8c28c4cbaec22d7f7de508ec2e7c0dd9
+        with:
+          build: false
+
+      - name: Regenerate and verify Lake manifest
+        run: |
+          lake update
+          git diff --exit-code -- lake-manifest.json
+
+      - name: Fetch Mathlib cache
+        run: lake exe cache get
+
+      - name: Build project, Challenge, and Solution
+        run: lake build
+
+      - name: Python regression tests
+        run: python3 -m unittest discover -s tests -v
+
+      - name: Reference sweep
+        run: python3 scripts/reference_check.py
+
+      - name: Proof-source placeholder and replacement-axiom checks
+        run: |
+          if grep -R -n -E '\bsorry\b|\badmit\b' PascalMinusOne/*.lean; then
+            echo "proof development contains sorry/admit" >&2
+            exit 1
+          fi
+          if grep -R -n -E '^[[:space:]]*axiom[[:space:]]' PascalMinusOne/*.lean; then
+            echo "proof development contains an axiom declaration" >&2
+            exit 1
+          fi
+
+      - name: Repository packaging hygiene
+        run: |
+          test ! -f .gitmodules
+          test -z "$(git ls-files -s | awk '$1 == "160000" {print}')"
+          test -z "$(git ls-files -s | awk '$1 == "120000" {print}')"
+          test -z "$(git ls-files | grep '^\.lake/' || true)"
+          while IFS= read -r f; do
+            if [ "$(head -n 1 "$f" 2>/dev/null || true)" = "version https://git-lfs.github.com/spec/v1" ]; then
+              echo "Git LFS pointer detected: $f" >&2
+              exit 1
+            fi
+          done < <(git ls-files)
+          echo "Challenge lines: $(wc -l < Challenge.lean)"
+
+      - name: Install bubblewrap for local Comparator check
+        run: |
+          sudo apt-get update -qq >/dev/null
+          sudo apt-get install -y -qq bubblewrap >/dev/null
+          sudo sysctl -w kernel.apparmor_restrict_unprivileged_userns=0
+
+      - name: Run toolchain lake comparator
+        run: bash scripts/verify-comparator.sh
+
+      - name: Report theorem axioms
+        run: |
+          cat > "$RUNNER_TEMP/PalomarAxiomAudit.lean" <<'LEAN'
+          import Solution
+          #print axioms PascalMinusOnePalomar.minus_one_valuation
+          LEAN
+          lake env lean "$RUNNER_TEMP/PalomarAxiomAudit.lean"

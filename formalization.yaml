@@ -32,12 +32,8 @@ sources:
       This repository is the mathematical source in which the submitted full
       minus-one theorem is presented and proved. Palomar's original-proof marker
       is used here only to record result origin for provenance; it is not an
-      unconditional historical priority claim. A source-level literature audit
-      through September 2026 located no equivalent prior theorem for the full
-      p ≡ -1 (mod m) valuation formula. McTague's 2017 theorem and its
-      same-residue weakening cover the p ≡ 1 (mod m) branch and part of the
-      minus-one p>m regime, but not the mixed-parity branch or the general
-      p=m-1 classification proved here.
+      unconditional historical priority claim. The adopted public novelty
+      wording is: «A source-level literature audit through September 2026 located no equivalent prior theorem for the full "p ≡ -1 (mod m)" valuation formula. McTague's 2017 theorem and its same-residue weakening cover the "p ≡ 1 (mod m)" branch and part of the minus-one "p>m" regime, but not the mixed-parity branch or the general "p=m-1" classification proved here.»
   - title: "On the Greatest Common Divisor of Binomial Coefficients C(n,q), C(n,2q), C(n,3q), ..."
     authors:
       - "Carl McTague"

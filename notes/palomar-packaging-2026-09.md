@@ -47,11 +47,7 @@ claim.
 
 The public novelty wording remains:
 
-> A source-level literature audit through September 2026 located no equivalent
-> prior theorem for the full `p ≡ -1 (mod m)` valuation formula. McTague's
-> 2017 theorem and its same-residue weakening cover the `p ≡ 1 (mod m)`
-> branch and part of the minus-one `p>m` regime, but not the mixed-parity
-> branch or the general `p=m-1` classification proved here.
+> «A source-level literature audit through September 2026 located no equivalent prior theorem for the full "p ≡ -1 (mod m)" valuation formula. McTague's 2017 theorem and its same-residue weakening cover the "p ≡ 1 (mod m)" branch and part of the minus-one "p>m" regime, but not the mixed-parity branch or the general "p=m-1" classification proved here.»
 
 ## Licence
 

@@ -147,23 +147,32 @@ See [`notes/literature.md`](notes/literature.md) for the concise boundary and
 [`notes/novelty-audit-2026-09.md`](notes/novelty-audit-2026-09.md) for the full
 source-level comparison and bibliography.
 
-## Palomar packaging
+## Palomar registration
 
-The repository contains a Palomar package for the principal theorem
+Palomar registration is complete. Version 1 is registered as
+[`PALOMAR-2026-09-25-000017`](https://palomar-registry.org/entry.html?id=PALOMAR-2026-09-25-000017&version=1) on 25 September 2026.
+
+The registered package advertises the principal theorem
 `PascalMinusOne.minus_one_valuation`. The Mathlib-only `Challenge.lean`
 restates the restricted gcd, parity digit sums, expected valuation, and theorem
 inside `PascalMinusOnePalomar`; `Solution.lean` connects those declarations
 to the existing proof. `comparator.json` compares the theorem and every
 project-specific definition in its type.
 
-The predictive workflow is pinned to PalomarSubmission
-`a59f25bd8a66bf6faf3a4f4260d412989c0185ea`, runs preparation before the full mechanical verifier, and
-uses the documented single `mode: full` reusable-workflow pattern with the `palomar-standard-v1` execution profile. A green predictive
-run is packaging evidence only; it is not a Palomar submission, editorial
-review, acceptance, registration, or publication.
+The repository retains the predictive workflow used before registration. It is
+pinned to PalomarSubmission
+`a59f25bd8a66bf6faf3a4f4260d412989c0185ea`, runs preparation before the full
+mechanical verifier, and uses the documented single `mode: full`
+reusable-workflow pattern with the `palomar-standard-v1` execution profile.
+Those predictive runs are pre-registration packaging evidence; the completed
+registry record is the Palomar entry linked above. Registration is distinct
+from independent peer review and from later paper/arXiv publication.
 
-See `notes/palomar-packaging-2026-09.md` for the immutable contract pins and
-scope.
+The next project stages are a refreshed novelty audit, preparation of the
+research paper, and then arXiv submission.
+
+See `notes/palomar-packaging-2026-09.md` for the immutable contract pins,
+pre-flight history, and registration outcome.
 
 ## License
 

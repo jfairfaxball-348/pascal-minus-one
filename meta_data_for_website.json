@@ -15,8 +15,8 @@
     "Mathlib"
   ],
   "github_url": "https://github.com/jfairfaxball-348/pascal-minus-one",
-  "palomar_id": null,
-  "palomar_url": null,
+  "palomar_id": "PALOMAR-2026-09-25-000017",
+  "palomar_url": "https://palomar-registry.org/entry.html?id=PALOMAR-2026-09-25-000017&version=1",
   "paper_url": null,
   "arxiv_id": null,
   "arxiv_url": null,
@@ -27,5 +27,5 @@
   "original_source": null,
   "featured": true,
   "additional_links": [],
-  "date": "2026-09-24"
+  "date": "2026-09-25"
 }

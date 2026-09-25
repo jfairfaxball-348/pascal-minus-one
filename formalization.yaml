@@ -130,9 +130,10 @@ review:
     regression, finite reference-sweep, zero-sorry/admit/replacement-axiom, and
     statement-alignment checks. A source-level literature audit through
     September 2026 is recorded in notes/literature.md and
-    notes/novelty-audit-2026-09.md. No independent human peer review is claimed;
-    Palomar's later editorial review is separate from this pre-submission
-    self-assessment.
+    notes/novelty-audit-2026-09.md. Palomar registration is complete as
+    PALOMAR-2026-09-25-000017, version 1. No independent human peer review is
+    claimed; the registry record is distinct from this self-assessment and from
+    later paper/arXiv publication.
   prior_art:
     status: "source-level audit completed"
     as_of: "2026-09-25"

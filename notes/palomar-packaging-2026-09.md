@@ -1,8 +1,19 @@
 # Palomar packaging audit — 25 September 2026
 
 This note records the immutable external contract used to prepare the repository
-for predictive Palomar mechanical pre-flight. It does **not** record a Palomar
-submission or registration.
+for predictive Palomar mechanical pre-flight, together with the registration
+outcome. The pre-flight details below are retained as an audit trail.
+
+## Registration outcome
+
+Palomar registration completed on 25 September 2026.
+
+- registry id: `PALOMAR-2026-09-25-000017`
+- version: `1`
+- registry entry: https://palomar-registry.org/entry.html?id=PALOMAR-2026-09-25-000017&version=1
+
+The next project stages are a refreshed novelty audit, preparation of the
+research paper, and then arXiv submission.
 
 ## Contract pins
 

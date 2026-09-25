@@ -1,13 +1,15 @@
 name: Palomar Predictive Preflight
 
 on:
-  push:
-    branches: [palomar/package]
   pull_request:
   workflow_dispatch:
 
 permissions:
   contents: read
+
+concurrency:
+  group: palomar-predictive-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
 
 jobs:
   palomar-prepare:

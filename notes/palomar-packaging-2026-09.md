@@ -12,7 +12,7 @@ submission or registration.
 - Lean toolchain: `leanprover/lean4:v4.35.0-rc2`
 - Mathlib: `bd6c1abe5f55b6c3856172d6a23703e0888f5286`
 - formalization.yaml schema: `v0.4`
-- predictive execution profile: `palomar-standard-v1`
+- predictive execution profile: blank input, resolving under the pinned PalomarSubmission commit to catalogue default `palomar-namespace-16x32-v1`
 
 The submission protocol was also checked against
 `https://submit.palomar-registry.org/llms.txt` on 25 September 2026. The

@@ -124,28 +124,43 @@ base-`p` digit and digit-sum lemmas.
 
 ## Literature and novelty
 
-A source-level audit through **September 2026** located **no equivalent prior theorem
-for the full `p ≡ -1 (mod m)` valuation formula**.
+A final source-level audit through **25 September 2026** located **no equivalent prior
+theorem for the full \(p\equiv-1\pmod m\) valuation formula**.
 
-The closest prior art is Carl McTague's 2017 theorem for the same restricted gcd family.
-McTague's `p ≡ 1 (mod m)` result mathematically covers the plus-one branch, and his
-same-residue weakening also covers the minus-one one-parity cases
-`(A,B)=(m,0)` and `(0,m)` when `p>m`. McTague additionally records the concrete
-`m=3, p=2, N=6` valuation-2 example.
+The closest prior art is Carl McTague's theorem for exactly the same restricted gcd
+family. McTague's Theorem Q mathematically gives the project's
+\(p\equiv1\pmod m\) branch. The **corrected arXiv v5** first remark on page 2
+also gives the minus-one one-parity cases \((A,B)=(m,0)\) and \((0,m)\)
+when \(p>m\).
 
-The audit did **not** locate a prior theorem giving the full mixed-parity minus-one
-classification or the general `p=m-1` classification formalised here. The repository
-therefore describes the minus-one result as **appearing to extend known results** and
-does not make an unconditional "first" or priority claim.
+That corrected same-residue remark does **not** cover the mixed
+\((A,B)=(1,1)\) branch, because both \(+1\) and \(-1\) residue classes occur.
+It also does not cover **any \(p=m-1\) case**, because corrected v5 requires
+\(p>q=m\). McTague does record the concrete \(m=3,p=2,N=6\) valuation-2
+example, so the existence of that phenomenon is prior art.
 
-No prior proof-assistant formalisation of this arithmetic-progression restricted
-binomial-gcd valuation family was located, although Mathlib already formalises Kummer's
-theorem and classical full-row binomial gcds, and other binomial-gcd problems have been
-formalised in Lean.
+The audit located no equivalent prior theorem for the mixed-parity branch or for the
+general \(p=m-1\) regime, including the one-parity low-prime cases. The repository
+therefore describes the full minus-one theorem as **appearing to extend known
+results** and does not make an unconditional "first" or historical-priority claim.
 
-See [`notes/literature.md`](notes/literature.md) for the concise boundary and
-[`notes/novelty-audit-2026-09.md`](notes/novelty-audit-2026-09.md) for the full
-source-level comparison and bibliography.
+Chai Wah Wu's 2026 preprint studies the same gcd object under \(N=mn\), but its main
+product theorem assumes a prime-power modulus and relevant non-modulus primes
+congruent to \(1\pmod m\); it does not imply the general minus-one theorem. The
+scaling theorem is treated as formal proof infrastructure built on a standard Kummer
+carry-shift mechanism, not as a separate headline novelty claim.
+
+No prior proof-assistant formalisation of this arithmetic-progression fixed-row
+binomial-gcd valuation family was located. Guo--Qiu--Cao--Feng--Gao (2026) do provide
+a Lean formalisation of a **different** binomial-gcd family, so this repository does
+not claim to be the first formalisation of binomial-gcd mathematics in general.
+
+The complete \(m=3,4,6\) formulas are presented as applications/corollaries of the
+theorem layer rather than as independent novelty claims.
+
+See [notes/literature.md](notes/literature.md) for the concise boundary and
+[notes/novelty-audit-2026-09.md](notes/novelty-audit-2026-09.md) for the final
+source-level comparison, search methodology, theorem-level matrix, and bibliography.
 
 ## Palomar registration
 
@@ -168,8 +183,8 @@ Those predictive runs are pre-registration packaging evidence; the completed
 registry record is the Palomar entry linked above. Registration is distinct
 from independent peer review and from later paper/arXiv publication.
 
-The next project stages are a refreshed novelty audit, preparation of the
-research paper, and then arXiv submission.
+The final pre-paper novelty audit is complete. The next project stages are
+preparation of the research paper and then arXiv submission.
 
 See `notes/palomar-packaging-2026-09.md` for the immutable contract pins,
 pre-flight history, and registration outcome.

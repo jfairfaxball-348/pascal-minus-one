@@ -60,7 +60,16 @@ sources:
       centered on primes congruent to 1 modulo m; it does not supply the general
       minus-one theorem submitted here.
 
-related_formalizations: []
+related_formalizations:
+  - id: "https://github.com/MechMath/binomial-gcd"
+    relationship: "independent"
+    note: >-
+      Guo, Qiu, Cao, Feng and Gao's 2026 Lean 4 formalisation proves the OEIS
+      A080170 criterion for D(k) = gcd_{2 <= q <= k+1} C(qk,k), where the lower
+      index is fixed and the upper row varies. It is related binomial-gcd
+      mathematics but is not a formalisation of McTague's fixed-row
+      arithmetic-progression family or of this project's minus-one theorem;
+      no code or theorem dependency is shared.
 
 status:
   scope: >-

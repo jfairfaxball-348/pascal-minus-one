@@ -60,10 +60,12 @@ jobs:
           test -z "$(git ls-files -s | awk '$1 == "160000" {print}')"
           test -z "$(git ls-files -s | awk '$1 == "120000" {print}')"
           test -z "$(git ls-files | grep '^\.lake/' || true)"
-          if git grep -Il 'version https://git-lfs.github.com/spec/v1' -- .; then
-            echo "Git LFS pointer detected" >&2
-            exit 1
-          fi
+          while IFS= read -r f; do
+            if [ "$(head -n 1 "$f" 2>/dev/null || true)" = "version https://git-lfs.github.com/spec/v1" ]; then
+              echo "Git LFS pointer detected: $f" >&2
+              exit 1
+            fi
+          done < <(git ls-files)
           echo "Challenge lines: $(wc -l < Challenge.lean)"
 
       - name: Install bubblewrap for local Comparator check
@@ -73,7 +75,7 @@ jobs:
           sudo sysctl -w kernel.apparmor_restrict_unprivileged_userns=0
 
       - name: Run toolchain lake comparator
-        run: ./scripts/verify-comparator.sh
+        run: bash scripts/verify-comparator.sh
 
       - name: Report theorem axioms
         run: |

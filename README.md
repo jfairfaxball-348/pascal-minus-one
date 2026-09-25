@@ -158,7 +158,7 @@ project-specific definition in its type.
 
 The predictive workflow is pinned to PalomarSubmission
 `a59f25bd8a66bf6faf3a4f4260d412989c0185ea`, runs preparation before the full mechanical verifier, and
-uses the required `palomar-standard-v1` execution profile. A green predictive
+leaves `execution_profile` blank so the pinned Palomar workflow resolves its checked-in default execution profile. A green predictive
 run is packaging evidence only; it is not a Palomar submission, editorial
 review, acceptance, registration, or publication.
 

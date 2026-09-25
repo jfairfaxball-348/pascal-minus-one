@@ -3,9 +3,9 @@
   "title": "Pascal Minus-One GCD",
   "slug": "pascal-minus-one",
   "status": "Formalisation complete",
-  "headline": "Lean/Mathlib proofs of the restricted binomial-gcd valuation branches needed for complete prime-by-prime formulas at moduli 3, 4 and 6.",
+  "headline": "Lean/Mathlib formalisation of the restricted binomial-gcd valuation theorem; a September 2026 source audit found no equivalent prior full minus-one theorem.",
   "year": 2026,
-  "description": "This project studies $G(N;m)=\\gcd\\{\\binom Nk:0<k<N,\\ m\\mid k\\}$. The repository now formally proves the $p\\equiv-1\\pmod m$ valuation theorem, the complementary $p\\equiv1\\pmod m$ branch used by the project, a common prime-power scaling theorem, and complete prime-by-prime valuation corollaries for $m=3,4,6$. The Lean source contains no theorem placeholders; finite Python checks remain regression evidence rather than substitutes for proof.",
+  "description": "This project studies $G(N;m)=\\gcd\\{\\binom Nk:0<k<N,\\ m\\mid k\\}$. The repository formally proves the $p\\equiv-1\\pmod m$ valuation theorem, the complementary $p\\equiv1\\pmod m$ branch, a common prime-power scaling theorem, and complete prime-by-prime valuation corollaries for $m=3,4,6$. A source-level literature audit through September 2026 found substantial overlap with McTague's known plus-one theorem and same-residue subfamilies, but located no equivalent prior theorem for the full minus-one classification, including its mixed-parity and general $p=m-1$ cases.",
   "topics": [
     "number theory",
     "binomial coefficients",
@@ -23,7 +23,7 @@
   "doi": null,
   "formalisation_system": "Lean 4 / Mathlib",
   "verification": "Lean-verified theorem layer: minus-one valuation, plus-one valuation, scaling, and complete modulus 3, 4 and 6 valuation corollaries. Project Lean sources have zero explicit sorry, admit, or replacement axiom declarations; CI checks the build, regression tests, reference sweep, and zero-sorry gate.",
-  "attribution": "John Fairfax-Ball maintains the repository and its Lean formalisation. Mathlib supplies Kummer's theorem and supporting digit machinery. The plus-one direction has known prior art and is not claimed as new here. The repository makes no publication-level novelty claim for the minus-one result without a separate source-level literature audit.",
+  "attribution": "John Fairfax-Ball maintains the repository and its Lean formalisation. Mathlib supplies Kummer's theorem and supporting digit machinery. McTague's 2017 work gives the plus-one theorem for the same restricted gcd family, covers same-residue minus-one subfamilies for p>m, and records the m=3, p=2 valuation-2 example. The September 2026 source-level audit located no equivalent prior theorem for the full minus-one classification; the repository describes this as an apparent extension of known results rather than making an unconditional first or priority claim.",
   "original_source": null,
   "featured": true,
   "additional_links": []

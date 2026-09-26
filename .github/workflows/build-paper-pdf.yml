@@ -1,0 +1,41 @@
+name: Build paper PDF
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "paper/main.tex"
+      - ".github/workflows/build-paper-pdf.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build-paper:
+    runs-on: ubuntu-latest
+    if: github.actor != 'github-actions[bot]'
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Compile paper
+        uses: xu-cheng/latex-action@v3
+        with:
+          root_file: main.tex
+          working_directory: paper
+
+      - name: Publish stable PDF
+        shell: bash
+        run: |
+          set -euo pipefail
+          cp paper/main.pdf paper/pascal-minus-one-paper.pdf
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add paper/pascal-minus-one-paper.pdf
+          if git diff --cached --quiet; then
+            echo "PDF is already up to date."
+            exit 0
+          fi
+          git commit -m "Publish compiled research paper PDF"
+          git push

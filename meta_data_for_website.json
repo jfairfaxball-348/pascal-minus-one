@@ -2,18 +2,12 @@
   "schema_version": 1,
   "title": "Pascal Minus-One GCD",
   "slug": "pascal-minus-one",
-  "status": "Paper prepared · arXiv submission ready · Palomar verified",
-  "headline": "Lean/Mathlib formalisation complete, Palomar verified, and arXiv-ready paper/source bundle prepared; not yet submitted to arXiv.",
+  "status": "Paper prepared",
+  "headline": "Lean/Mathlib formalisation complete, Palomar verified, with a research paper and arXiv source bundle prepared but not yet submitted.",
   "year": 2026,
-  "description": "This project studies $G(N;m)=\\gcd\\{\\binom Nk:0<k<N,\\ m\\mid k\\}$. The repository formally proves the $p\\equiv-1\\pmod m$ valuation theorem, the complementary $p\\equiv1\\pmod m$ branch, a common prime-power scaling theorem, and complete prime-by-prime valuation corollaries for $m=3,4,6$. The final source-level audit through 25 September 2026 located no equivalent prior theorem for the full minus-one classification. McTague's Theorem Q gives the plus-one branch, and the corrected arXiv v5 same-residue remark gives the one-parity minus-one branches for $p>m$; no equivalent prior theorem was located for the mixed-parity branch or the general $p=m-1$ regime. This is a negative-search statement rather than an unconditional historical-priority claim. A research paper and clean arXiv source bundle are prepared, but no arXiv submission has been made.",
-  "topics": [
-    "number theory",
-    "binomial coefficients",
-    "greatest common divisors",
-    "p-adic valuations",
-    "Lean 4",
-    "Mathlib"
-  ],
+  "date": "2026-09-25",
+  "description": "This project studies $G(N;m)=\\gcd\\{\\binom Nk:0<k<N,\\ m\\mid k\\}$. It formally proves the $p\\equiv-1\\pmod m$ valuation theorem, the complementary $p\\equiv1\\pmod m$ branch, a prime-power scaling theorem and complete prime-by-prime valuation corollaries for $m=3,4,6$. A source-level audit through 25 September 2026 located no equivalent prior theorem for the full minus-one classification; this is a negative-search statement rather than an unconditional historical-priority claim.",
+  "topics": ["Number theory", "Binomial coefficients", "Greatest common divisors", "p-adic valuations", "Lean 4", "Mathlib"],
   "github_url": "https://github.com/jfairfaxball-348/pascal-minus-one",
   "palomar_id": "PALOMAR-2026-09-25-000017",
   "palomar_url": "https://palomar-registry.org/entry.html?id=PALOMAR-2026-09-25-000017&version=1",
@@ -22,15 +16,18 @@
   "arxiv_url": null,
   "doi": null,
   "formalisation_system": "Lean 4 / Mathlib",
-  "verification": "Lean-verified theorem layer: minus-one valuation, plus-one valuation, scaling, and complete modulus 3, 4 and 6 valuation corollaries. Project Lean sources have zero explicit sorry, admit, or replacement axiom declarations; CI checks the build, regression tests, reference sweep, and zero-sorry gate. Palomar registry entry: PALOMAR-2026-09-25-000017, version 1.",
-  "attribution": "John Fairfax-Ball maintains the repository and its Lean formalisation. Mathlib supplies Kummer's theorem and supporting digit machinery. McTague's 2017 work gives the plus-one theorem for the same restricted gcd family; the corrected arXiv v5 same-residue remark covers the one-parity minus-one branches for p>m and records the m=3, p=2 valuation-2 example. The final September 2026 audit located no equivalent prior theorem for the full minus-one classification, including no general treatment of the mixed-parity branch or the p=m-1 regime. Guo et al. (2026) formalised a different binomial-gcd family in Lean, so this project claims only that no equivalent formalisation of this restricted family was located.",
-  "original_source": null,
+  "verification": "Lean-verified theorem layer: minus-one valuation, plus-one valuation, scaling, and complete modulus 3, 4 and 6 valuation corollaries. CI checks the build, regression tests, reference sweep and zero-sorry gate. Palomar registry entry: PALOMAR-2026-09-25-000017, version 1.",
+  "attribution": "John Fairfax-Ball maintains the repository and its Lean formalisation. Mathlib supplies Kummer's theorem and supporting digit machinery. McTague's work gives the plus-one theorem and strict subfamilies of the minus-one side; the September 2026 audit located no equivalent prior theorem for the full minus-one classification.",
+  "original_source": "Carl McTague, “On the Greatest Common Divisor of Binomial Coefficients C(n,q), C(n,2q), C(n,3q), ...”, American Mathematical Monthly 124(4) (2017), 353–356, corrected arXiv:1510.06696v5. Chai Wah Wu, “Computing the Greatest Common Divisor of Binomial Coefficients C(mn,mk)”, arXiv:2606.20940v2 (2026), is also directly relevant.",
   "featured": true,
   "additional_links": [
     {
-      "label": "Palomar record",
-      "url": "https://palomar-registry.org/entry.html?id=PALOMAR-2026-09-25-000017&version=1"
+      "label": "McTague prior work",
+      "url": "https://arxiv.org/abs/1510.06696"
+    },
+    {
+      "label": "Literature / novelty audit",
+      "url": "https://github.com/jfairfaxball-348/pascal-minus-one/blob/main/notes/novelty-audit-2026-09.md"
     }
-  ],
-  "date": "2026-09-25"
+  ]
 }

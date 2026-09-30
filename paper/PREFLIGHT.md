@@ -2,7 +2,10 @@
 
 Date: 25 September 2026.
 
-No arXiv submission was made.
+This file records the pre-submission checks performed on 25 September 2026. At that
+time no arXiv submission had yet been made. The resulting paper was subsequently
+submitted and is public as [arXiv:2609.37754](https://arxiv.org/abs/2609.37754)
+(`math.NT`), version 1 submitted on 29 September 2026.
 
 ## Authoritative guidance checked
 
@@ -89,10 +92,16 @@ Comments field: `8 pages. Lean 4 / Mathlib formalization available in the linked
 
 License recommendation: choose a license intentionally at submission time. CC BY 4.0 is the most liberal standard arXiv option and is compatible with broad reuse, but the decision is irrevocable for the submitted version and should reflect journal/funder plans.
 
-## Remaining manual checks for the later submission session
+## Submission outcome
 
-- Upload `pascal-minus-one-arxiv-source.zip` to arXiv, but do not include the locally compiled PDF unless arXiv explicitly asks for it.
-- Confirm the generated arXiv preview PDF matches `pascal-minus-one-paper.pdf`.
-- Confirm author identity/affiliation metadata in the arXiv web form.
-- Confirm the license choice.
-- Do not enter an arXiv ID, DOI, journal reference, or report number before arXiv or a journal actually assigns one.
+The later submission session completed successfully and produced the public record:
+
+- arXiv identifier: `2609.37754`
+- primary category: `math.NT`
+- version: v1
+- submission date: 29 September 2026
+- public record: https://arxiv.org/abs/2609.37754
+
+The pre-flight material above is retained as a historical record of the checks made
+before submission. The repository does not claim a registered DOI here while the
+arXiv record still reports its arXiv-issued DOI as pending registration.

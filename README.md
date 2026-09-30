@@ -162,6 +162,20 @@ See [notes/literature.md](notes/literature.md) for the concise boundary and
 [notes/novelty-audit-2026-09.md](notes/novelty-audit-2026-09.md) for the final
 source-level comparison, search methodology, theorem-level matrix, and bibliography.
 
+## Paper and arXiv
+
+The research paper is now public on arXiv:
+
+- **Title:** *Restricted Binomial GCDs at Primes Congruent to -1*
+- **arXiv:** [`2609.37754`](https://arxiv.org/abs/2609.37754) (`math.NT`)
+- **Submitted:** 29 September 2026
+- **Version:** v1
+- **Length:** 8 pages, no figures
+
+The arXiv record links back to this repository as the Lean 4 / Mathlib formalisation.
+The paper source is maintained in [`paper/main.tex`](paper/main.tex), with the local
+compiled PDF in [`paper/pascal-minus-one-paper.pdf`](paper/pascal-minus-one-paper.pdf).
+
 ## Palomar registration
 
 Palomar registration is complete. Version 1 is registered as
@@ -183,8 +197,9 @@ Those predictive runs are pre-registration packaging evidence; the completed
 registry record is the Palomar entry linked above. Registration is distinct
 from independent peer review and from later paper/arXiv publication.
 
-The final pre-paper novelty audit is complete. The next project stages are
-preparation of the research paper and then arXiv submission.
+The final pre-paper novelty audit, paper preparation, and arXiv v1 submission are
+complete. The public preprint is arXiv:2609.37754 [math.NT], submitted on
+29 September 2026.
 
 See `notes/palomar-packaging-2026-09.md` for the immutable contract pins,
 pre-flight history, and registration outcome.

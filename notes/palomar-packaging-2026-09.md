@@ -12,8 +12,10 @@ Palomar registration completed on 25 September 2026.
 - version: `1`
 - registry entry: https://palomar-registry.org/entry.html?id=PALOMAR-2026-09-25-000017&version=1
 
-The next project stages are a refreshed novelty audit, preparation of the
-research paper, and then arXiv submission.
+Those later project stages were subsequently completed: the source-level novelty
+audit was finalized, the research paper was prepared, and version 1 was submitted
+to arXiv on 29 September 2026 as
+[arXiv:2609.37754](https://arxiv.org/abs/2609.37754) [math.NT].
 
 ## Contract pins
 

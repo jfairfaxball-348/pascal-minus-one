@@ -3,10 +3,10 @@
   "title": "Pascal Minus-One GCD",
   "slug": "pascal-minus-one",
   "status": "arXiv preprint",
-  "headline": "Lean/Mathlib formalisation complete, Palomar registered, and the research paper is public as arXiv:2609.37754 [math.NT].",
+  "headline": "Lean/Mathlib formalisation complete, Palomar verified, and the research paper is public as arXiv:2609.37754 [math.NT].",
   "year": 2026,
   "date": "2026-09-29",
-  "description": "This project studies $G(N;m)=\\\\gcd\\\\{\\\\binom Nk:0<k<N,\\\\ m\\\\mid k\\\\}$. It formally proves the $p\\\\equiv-1\\\\pmod m$ valuation theorem, the complementary $p\\\\equiv1\\\\pmod m$ branch, a prime-power scaling theorem and complete prime-by-prime valuation corollaries for $m=3,4,6$. A source-level audit through 25 September 2026 located no equivalent prior theorem for the full minus-one classification; this is a negative-search statement rather than an unconditional historical-priority claim. The research paper is public as arXiv:2609.37754 [math.NT], v1 submitted 29 September 2026.",
+  "description": "This project studies $G(N;m)=\\gcd\\{\\binom Nk:0<k<N,\\ m\\mid k\\}$. It formally proves the $p\\equiv-1\\pmod m$ valuation theorem, the complementary $p\\equiv1\\pmod m$ branch, a prime-power scaling theorem and complete prime-by-prime valuation corollaries for $m=3,4,6$. A source-level audit through 25 September 2026 located no equivalent prior theorem for the full minus-one classification; this is a negative-search statement rather than an unconditional historical-priority claim. The research paper is public as arXiv:2609.37754 [math.NT], v1 submitted 29 September 2026.",
   "topics": [
     "Number theory",
     "Binomial coefficients",

@@ -32,8 +32,8 @@
 \DeclareMathOperator{\ord}{ord}
 
 \title{Restricted Binomial GCDs at Primes Congruent to \texorpdfstring{$-1$}{-1}}
-\author{John Fairfax-Ball}
-\date{25 September 2026}
+\author{John Fairfax-Ball\thanks{ORCID iD: \url{https://orcid.org/0009-0007-9017-4571}}}
+\date{9 October 2026}
 
 \begin{document}
 \maketitle
@@ -52,14 +52,20 @@ $(A,B)=(1,1)$ with $p=m-1$, is $1$ in the mixed case
 $(A,B)=(1,1)$ with $m<p$, is $1$ in the one-parity cases
 $(A,B)=(m,0)$ and $(A,B)=(0,m)$, and is $0$ otherwise.
 The proof uses Kummer's theorem to translate the problem into digitwise
-borrow counts and a minimal signed zero-sum classification.  A source-level
-literature audit through 25 September 2026 located no equivalent prior
-theorem for the full minus-one classification: McTague's corrected
-same-residue extension covers the one-parity $p>m$ subcases, but not the
-mixed-parity branch or the $p=m-1$ regime.  The theorem, its plus-one
+borrow counts and a minimal signed zero-sum classification.  This completes
+the classification at primes $p\equiv -1\pmod m$: McTague's corrected
+same-residue extension covers the one-parity subcases with $p>m$, but not the
+mixed-parity branch or the regime $p=m-1$.  The theorem, its plus-one
 companion, a scaling reduction, and the $m=3,4,6$ specializations have been
 formalized in Lean 4 / Mathlib.
 \end{abstract}
+
+\medskip
+\noindent\textbf{2020 Mathematics Subject Classification.} Primary 11B65;
+Secondary 11A63, 11A05, 68V20.
+
+\noindent\textbf{Keywords.} Binomial coefficients, greatest common divisor,
+$p$-adic valuation, Kummer's theorem, formal verification, Lean.
 
 \section{Introduction}
 
@@ -488,6 +494,17 @@ The Palomar record is
 \begin{center}
 \url{https://palomar-registry.org/entry.html?id=PALOMAR-2026-09-25-000017\&version=1}
 \end{center}
+
+\section*{Use of AI tools}
+
+This work was developed with extensive assistance from AI tools
+(\mbox{OpenAI's} ChatGPT and Codex), under the direction of the author,
+including mathematical exploration, Lean development, proof auditing and
+preparation of the exposition.  The author selected the problem and scope and
+directed validation.  The proofs in this paper are written to be checked
+without the formal development; the theorems listed in
+Section~\ref{sec:formal} are in addition verified in Lean 4.  The author takes
+full responsibility for the content of the paper.
 
 \section*{Acknowledgements}
 

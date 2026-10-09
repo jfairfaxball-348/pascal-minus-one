@@ -14,3 +14,12 @@ The clean arXiv upload zip is generated from `main.tex` and is intentionally not
 committed as repository source. The canonical public preprint record is the arXiv
 entry linked above; the generated upload bundle is not required for the Lean theorem
 layer.
+
+## Journal version (prepared 9 October 2026)
+
+`main.tex` now carries the version prepared for journal submission and an
+arXiv replacement. Changes from arXiv v1: a "Use of AI tools" statement
+(OpenAI's ChatGPT and Codex), the author's ORCID iD, 2020 MSC codes and
+keywords, and an abstract that states the relation to McTague's remark
+directly instead of describing the literature search. The mathematics is
+unchanged.
